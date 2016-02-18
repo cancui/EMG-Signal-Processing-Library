@@ -5,6 +5,8 @@
 #define _CAN_SIGNAL_PROCESSING
 
 #include "linked_list.hpp"
+//use a "stack" class later instead of linked list
+
 
 class Data {
 public:
@@ -36,7 +38,7 @@ public:
 	int rollingAvg(int scope, int degreeHighPass); //Originally what I believed to be a high-pass. returns filtered data. size is the width to average. 
 
 
-	int lowPass(float extent); //removes broad waves in data. Relatively sophistocated, challenging to implement
+	//int lowPass(float extent); //removes broad waves in data. Relatively sophistocated, challenging to implement
 
 private:
 
@@ -58,6 +60,28 @@ private:
 
 
 
+/*
+
+class ECG: public Data {
+public:
+	ECG();
+	ECG(int pin);
+
+	~ECG();
+
+	void calibrate(); //finds max and min
+	void detectHR();
+
+
+private:
+
+	int min, max; //maximum and minimum analog readings
+	int HR; //heart rate
+
+};
+
+
+
 
 class AnalogAcc: public Data { //analog accelerometer
 public:
@@ -65,17 +89,15 @@ public:
 	AnalogAcc();
 	AnalogAcc(int pinX0, int pinY0, int pinZ0);
 
-	void calibrate(); //finds average for each axis
+	~AnalogAcc();
 
-	int get_xAvg();
-	int get_yAvg();
-	int get_zAvg();
+	void calibrate(); //finds average for each axis
 
 	int get_x();
 	int get_y();
 	int get_z();
 
-	//background functions for protothreads
+	//background functions for protothreads -- can be optimized to share threads (sometimes device can only be in one state and not the others)
 	bool changedDirection(); //returns true if accelerometer changed movement directions
 	bool accelerating(); //returns true if accelerometer is accelerating in a general direction
 
@@ -85,6 +107,20 @@ public:
 
 
 private:
+
+	//consider putting this in a separate file and importing
+	struct Vector {
+		Vector(int x0, int y0, int z0);
+
+
+		//NOT QUITE THE FUNCTIONS I NEED - CHECK STATICS NOTES******************
+		Vector* dot(Vector* other);
+		Vector* cross(Vector* other);
+		Vector* unitVector();
+
+		int x, y, z;
+	};
+
 	//inherited "pin" will be the x axis
 	int pinY;
 	int pinZ;
@@ -99,11 +135,14 @@ private:
 	int y;
 	int z;
 
+	//calibration length
+	const int CALIBRATIONLENGTH = 100;
+
 	bool changedDirection;
 	bool accelerating;
 
 };
 
-
+*/
 
 #endif
