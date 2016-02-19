@@ -2,7 +2,11 @@
 
 using namespace std;
 
-EMG::EMG() : pin(0), type("EMG"), averagingSize(15), dataLocalSum(0), rollingDataSum(0) {
+Data::get_type() {
+	return type;
+}
+
+EMG::EMG() : pin(0), type("EMG"), averagingSize(15), dataLocalSum(0), dataLocalAvg(0), rollingDataSum(0) {
 
 	averagingData = new LinkedList();
 
@@ -16,7 +20,7 @@ EMG::EMG() : pin(0), type("EMG"), averagingSize(15), dataLocalSum(0), rollingDat
 	rollingData = new LinkedList();
 }
 
-EMG::EMG(int pin0) : pin(pin0), type("EMG"), averagingSize(15), dataLocalSum(0), rollingDataSum(0) {
+EMG::EMG(int pin0) : pin(pin0), type("EMG"), averagingSize(15), dataLocalSum(0), dataLocalAvg(0), rollingDataSum(0) {
 
 	averagingData = new LinkedList();
 
@@ -30,7 +34,7 @@ EMG::EMG(int pin0) : pin(pin0), type("EMG"), averagingSize(15), dataLocalSum(0),
 	rollingData = new LinkedList();
 }
 
-EMG::EMG(int pin, int averagingSize0) : pin(pin0), type("EMG"), averagingSize(averagingSize0), dataLocalSum(0), rollingDataSum(0)  {
+EMG::EMG(int pin, int averagingSize0) : pin(pin0), type("EMG"), averagingSize(averagingSize0), dataLocalSum(0), dataLocalAvg(0), rollingDataSum(0)  {
 
 	averagingData = new LinkedList();
 
@@ -110,7 +114,7 @@ int EMG::rollingAvg(int scope, int degreeHighPass) {
 
 
 
-/*
+
 
 AnalogAcc::AnalogAcc() : pin(0), pinY(1), pinZ(2) {
 
@@ -124,19 +128,43 @@ AnalogAcc::Vector::Vector(int x0, int y0, int z0) : x(x0), y(y0), z(z0)  {
 
 }
 
-Vector* AnalogAcc::Vector::dot(Vector* other) {
-	Vector* newVector = new Vector(0, 0, 0);
-
-	newVector->x = this->x * 
+int AnalogAcc::Vector::dot(Vector* other) {
+	return this->x * other->x + this->y * other->y + this->z * other->z;
 }
 
 Vector* AnalogAcc::Vector::cross(Vector* other) {
+	Vector* newVector = new Vector(0,0,0);
 
+	newVector->x = this->y * other->z - other->y * this->z;
+	newVector->y = other->x * this->z - this->x * other->z;
+	newVector->z = this->x * other->y - other->x * this->y; 
+
+	return newVector;
+}
+
+int AnalogAcc::Vector::getMagnitude() {
+  int a = this->x * this->x;
+  int b = this->y * this->y;
+  int c = this->z * this->z;
+  
+  int value = sqrt(a + b + c);
+
+  return value;
 }
 
 Vector* AnalogAcc::Vector::unitVector() {
+	Vector* newVector = new Vector(0,0,0);
+	int mag = this->getMagnitude();
 
+	newVector->x = this->x / mag;
+	newVector->y = this->y / mag;
+	newVector->z = this->z / mag;
+
+	return newVector;
 }
+
+
+		
 
 //finds average for each axis
 void AnalogAcc::calibrate() {
@@ -165,4 +193,3 @@ int AnalogAcc::get_z() {
 	return analogRead(pinZ) - zAvg;
 }
 
-*/

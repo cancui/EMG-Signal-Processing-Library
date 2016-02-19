@@ -60,7 +60,7 @@ private:
 
 
 
-/*
+
 
 class ECG: public Data {
 public:
@@ -114,9 +114,14 @@ private:
 
 
 		//NOT QUITE THE FUNCTIONS I NEED - CHECK STATICS NOTES******************
-		Vector* dot(Vector* other);
+		int dot(Vector* other);
 		Vector* cross(Vector* other);
+
+		int getMagnitude();
 		Vector* unitVector();
+
+		//int ... cos(pheta) = A.B/AB
+		//int ... F.U_ab ... gives component of vector F in the direction of vector U
 
 		int x, y, z;
 	};
@@ -143,6 +148,6 @@ private:
 
 };
 
-*/
+
 
 #endif
