@@ -7,7 +7,6 @@
 #include "linked_list.hpp"
 //use a "stack" class later instead of linked list
 
-
 class Data {
 public:
 	string get_type(); //returns what type of sensor/data
@@ -18,70 +17,57 @@ protected:
 	
 };
 
-
-
-
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 class EMG: public Data {
 public:
 	//constructors (SETS TYPE TO EMG)
 	EMG();
 	EMG(int pin); 
-	EMG(int pin, int averagingSize0); //create a dynamic array for rollingData
+	EMG(int pin, int averagingSize0); //create a dynamic array for movingData
 	~EMG(); //destructor 
 
 	int localAvg(); //To be called on a separate and looping thread during initialization
 	int highPass(float degree); //Extent is 1-10, 10 being the strongest. Logarithmic high-pass filter reducing the difference of spikes from the local mean. 
 	int rectify(); //takes the absolute value of (reading - localAvg) 
 	
-	int rollingAvg(int scope, int degreeHighPass); //Originally what I believed to be a high-pass. returns filtered data. size is the width to average. 
+	int movingAvg(int scope, int degreeHighPass); //Originally what I believed to be a high-pass. returns filtered data. size is the width to average. 
 
 
 	//int lowPass(float extent); //removes broad waves in data. Relatively sophistocated, challenging to implement
 
 private:
 
-	int averagingSize; //length of rollingAvg
+	int averagingSize; //sample size to average
 	LinkedList* averagingData; 
 
 	int dataLocalSum;
 	int dataLocalAvg; //average of the data over the last [rollingSize] points
 	
-	LinkedList* rollingData;//pointer for rollingData
-	int rollingDataSum; 
+	LinkedList* movingData;//pointer for movingData
+	int movingDataSum; 
 };
 
-
-
-
-
-
-
-
-
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 class ECG: public Data {
 public:
 	ECG();
-	ECG(int pin);
+	ECG(int pin0);
 
-	~ECG();
-
-	void calibrate(); //finds max and min
-	void detectHR();
-
+	void calibrate(); //finds max, min, and average
+	int detectHR(); 
 
 private:
 
-	int min, max; //maximum and minimum analog readings
+	int min, max, avg; //maximum and minimum analog readings
 	int HR; //heart rate
+
+	const int CALIBRATIONLENGTH = 2000;
 
 };
 
-
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 class AnalogAcc: public Data { //analog accelerometer
 public:
@@ -103,8 +89,6 @@ public:
 
 	//feature functions
 	int detectShake(); //returns a magnitude, 0 being no shake, 100 being very strong shake
-
-
 
 private:
 
@@ -141,7 +125,7 @@ private:
 	int z;
 
 	//calibration length
-	const int CALIBRATIONLENGTH = 100;
+	const int CALIBRATIONLENGTH = 200;
 
 	bool changedDirection;
 	bool accelerating;

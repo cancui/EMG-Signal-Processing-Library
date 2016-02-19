@@ -1,3 +1,6 @@
+//Copyright stuff
+//Designed by Can Cui
+
 #include "_CAN_SIGNAL_PROCESSING.hpp"
 
 using namespace std;
@@ -6,7 +9,9 @@ Data::get_type() {
 	return type;
 }
 
-EMG::EMG() : pin(0), type("EMG"), averagingSize(15), dataLocalSum(0), dataLocalAvg(0), rollingDataSum(0) {
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+EMG::EMG() : pin(0), type("EMG"), averagingSize(15), dataLocalSum(0), dataLocalAvg(0), movingDataSum(0) {
 
 	averagingData = new LinkedList();
 
@@ -17,10 +22,10 @@ EMG::EMG() : pin(0), type("EMG"), averagingSize(15), dataLocalSum(0), dataLocalA
 		delay(1);
 	}
 
-	rollingData = new LinkedList();
+	movingData = new LinkedList();
 }
 
-EMG::EMG(int pin0) : pin(pin0), type("EMG"), averagingSize(15), dataLocalSum(0), dataLocalAvg(0), rollingDataSum(0) {
+EMG::EMG(int pin0) : pin(pin0), type("EMG"), averagingSize(15), dataLocalSum(0), dataLocalAvg(0), movingDataSum(0) {
 
 	averagingData = new LinkedList();
 
@@ -31,10 +36,10 @@ EMG::EMG(int pin0) : pin(pin0), type("EMG"), averagingSize(15), dataLocalSum(0),
 		delay(1);
 	}
 
-	rollingData = new LinkedList();
+	movingData = new LinkedList();
 }
 
-EMG::EMG(int pin, int averagingSize0) : pin(pin0), type("EMG"), averagingSize(averagingSize0), dataLocalSum(0), dataLocalAvg(0), rollingDataSum(0)  {
+EMG::EMG(int pin, int averagingSize0) : pin(pin0), type("EMG"), averagingSize(averagingSize0), dataLocalSum(0), dataLocalAvg(0), movingDataSum(0)  {
 
 	averagingData = new LinkedList();
 
@@ -45,18 +50,16 @@ EMG::EMG(int pin, int averagingSize0) : pin(pin0), type("EMG"), averagingSize(av
 		delay(1);
 	}
 
-	rollingData = new LinkedList();
+	movingData = new LinkedList();
 }
 
 EMG::~EMG() {
 
-	delete averagingData
-	delete rollingData;
+	delete averagingData;
+	delete movingData;
 
 }
 
-
-//I FORGOT THAT THESE FUNCTIONS ARE CALLED ON OBJECTS. FIX NOW
 int EMG::localAvg() {
 	int temp = analogRead(pin);
 
@@ -76,57 +79,77 @@ int EMG::rectify() {
 }
 
 int EMG::highPass(float degree) {
-	if (degree <= 1 || degree > 10) // extent must be (1, 10]
+	if (degree <= 1 || degree > 10) 	// extent must be (1, 10]
 		return -1;
 
-	return (log(this->rectify() + 1) / log(degree));
+	return (log(this->rectify() + 1) / log(degree));	// Maybe add a multiplier
 } 
 
-int EMG::rollingAvg(int scope, int degreeHighPass) {
-	int dataSize = rollingData->size();
+int EMG::movingAvg(int scope, int degreeHighPass) {
+	int dataSize = movingData->size();
 
 	int temp = this->highPass(degreeHighPass);
-	rollingDataSum += temp;
-	rollingData->insert_front(temp);
+	movingDataSum += temp;
+	movingData->insert_front(temp);
 
 	if (dataSize < scope) {
 		
 		return -1;
 
 	} else if (dataSize > scope) {
+
 		for (int i = dataSize - 1; i >= scope; i--) { // "i >= scope" may be "i >= scope - 1" ///// look out for data coming out at "-1" for one iteration
-			rollingDataSum -= rollingData->select(i);
-			rollingData->remove_back();
+			movingDataSum -= movingData->select(i);
+			movingData->remove_back();
 		}
 
-		return rollingDataSum/scope;
-	} else {
-		rollingDataSum -= rollingData->select(scope - 1);
-		rollingData->remove_back();
+		return movingDataSum/scope;
 
-		return rollingDataSum/scope;
+	} else {
+
+		movingDataSum -= movingData->select(scope - 1);
+		movingData->remove_back();
+
+		return movingDataSum/scope;
 	}
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////
 
+ECG::EMG() : pin(0), min(1025), max(-1), avg(-1) 	{ calibrate(); }
 
+ECG::EMG(int pin0) : pin(pin0), min(1025), max(-1), avg(-1) 	{ calibrate(); }
 
+void ECG::calibrate() {
 
+	int sum = 0;
 
+	for (int i = 0; i < CALIBRATIONLENGTH; i++) {
+		int temp = analogRead(pin);
+		sum += temp;
 
+		if (temp < min) {
+			min = temp;
+		} 
+		if (temp > max) {
+			max = temp;
+		}
+	}
 
+	avg = sum/CALIBRATIONLENGTH;
+}
 
-AnalogAcc::AnalogAcc() : pin(0), pinY(1), pinZ(2) {
+int ECG::detectHR() { //uses system's timers
 
 }
 
-AnalogAcc::AnalogAcc(int pinX0, int pinY0, int pinZ0) : pin(pinX0), pinY(pinY0), pinZ(pinZ0) {
+///////////////////////////////////////////////////////////////////////////////////////////////
 
-}
+AnalogAcc::AnalogAcc() : pin(0), pinY(1), pinZ(2) { calibrate(); }
 
-AnalogAcc::Vector::Vector(int x0, int y0, int z0) : x(x0), y(y0), z(z0)  {
+AnalogAcc::AnalogAcc(int pinX0, int pinY0, int pinZ0) : pin(pinX0), pinY(pinY0), pinZ(pinZ0) { calibrate(); }
 
-}
+AnalogAcc::Vector::Vector(int x0, int y0, int z0) : x(x0), y(y0), z(z0)  { calibrate(); }
 
 int AnalogAcc::Vector::dot(Vector* other) {
 	return this->x * other->x + this->y * other->y + this->z * other->z;
@@ -162,9 +185,6 @@ Vector* AnalogAcc::Vector::unitVector() {
 
 	return newVector;
 }
-
-
-		
 
 //finds average for each axis
 void AnalogAcc::calibrate() {
