@@ -1,79 +1,4 @@
-#Make classes for movingAvg 
-
-#Encapsulation of a key function that some filters require
-class Moving_Average(object):
-    def __init__(self, length, return_int = False):
-        self.data = []
-        self.data_sum = -1
-        self.data_avg = -1
-        self.length = length
-        self.value = -1
-        self.return_int = return_int
-
-    def get_movingAvg (self, data):
-        self.data.insert(0, data)
-        self.data_sum += data
-
-        if len(self.data) > self.length:
-            self.data_sum -= self.data.pop()
-
-        if self.return_int == True:
-            self.value = int(self.data_sum / self.length) #preserves integer form
-        else: 
-            self.value = 1.0 * self.data_sum / self.length
-
-        if len(self.data) < (self.length / 2):
-            return -1
-        else:
-            return self.value
-
-#Simplifies the creation of a moving average-based LPF 
-class LPF(Moving_Average):
-    def __init__(self, cutoff_frequency, sample_frequency, return_int = False):
-        length = int(0.125 * sample_frequency / cutoff_frequency)
-        Moving_Average.__init__(self, length, return_int = return_int)
-
-    def filter(self, to_filter):
-        if self.length < 2:
-            return to_filter
-        else:
-            return self.get_movingAvg(to_filter) 
-
-class PkPk(object):
-    def __init__(self, sample_frequency, min_frequency, max_frequency):
-        self.for_pkpk = []
-        self.min_frequency = min_frequency
-        self.max_frequency = max_frequency
-        self.min_pk_gap = sample_frequency / max_frequency
-        self.max_pk_gap = sample_frequency / min_frequency
-
-        #self.pk_indices = [] 
-        #self.pk_is_convex = []
-
-    def get_pkpk(self, data):
-        self.for_pkpk.insert(0, data)
-
-        #discards any data beyond two periods of the lowest-frequency wave
-        if len(self.for_pkpk) > (self.max_pk_gap * 2): 
-            self.for_pkpk.pop()
-
-        highest = max(self.for_pkpk)
-        lowest = min(self.for_pkpk)
-        self.neutral = (highest + lowest)/2
-
-        to_return = {'max' : highest, 'min' : lowest, 'pkpk' : highest - lowest, 'neutral' : self.neutral}
-
-        if len(self.for_pkpk) < self.min_pk_gap * 2:
-            return {'max' : -1, 'min' : -1, 'pkpk' : -1, 'neutral' : -1}
-        else:
-            return to_return
-
-    def find_peaks(self):
-        #cannot find another peak of oposite concavity until min_pk_gap data points past? 
-        pass
-
-    def advanced_get_pkpk(self):
-        pass
+import signal_utilities as su
 
 #Simple filter class assumes no low-frequency noise and data centred at 0. More complex filteres inherit from this.
 class EMG_filter_basic(object):
@@ -87,11 +12,11 @@ class EMG_filter_basic(object):
         #self.movingAvg = []                                    #used to store the datapoints for taking a moving average
         self.log = []                                          #used to store filtered data
         self.reference_available = reference_available
-        self.MA = Moving_Average(length = sample_frequency * range_, return_int = True)
+        self.MA = su.Moving_Average(length = sample_frequency * range_, return_int = True)
 
         if reference_available == True:
-            self.LPF_data = LPF(cutoff_frequency = 150, sample_frequency = sample_frequency)
-            self.LPF_reference = LPF(cutoff_frequency = 150, sample_frequency = sample_frequency)
+            self.LPF_data = su.LPF(cutoff_frequency = 150, sample_frequency = sample_frequency)
+            self.LPF_reference = su.LPF(cutoff_frequency = 150, sample_frequency = sample_frequency)
 
     #input filtered data
     def log_data(self, to_log):
@@ -160,7 +85,7 @@ class EMG_filter(EMG_filter_basic):
         #self.pkpk_stored = 10
 
         self.reference_available = reference_available
-        self.PkPk = PkPk(sample_frequency = sample_frequency, min_frequency = min_EMG_frequency, max_frequency = max_EMG_frequency)
+        self.PkPk = su.PkPk(sample_frequency = sample_frequency, min_frequency = min_EMG_frequency, max_frequency = max_EMG_frequency)
 
     '''
     #returns dictionary of max, min, difference, and neutral values
