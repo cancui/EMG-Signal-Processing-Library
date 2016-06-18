@@ -30,10 +30,10 @@ print " "
 
 '''
 
-b = emg.EMG_filter(sample_frequency = 80, range_ = 0.1, reference_available = False)
+b = emg.EMG_filter(sample_frequency = 80, range_ = 0.1, reference_available = True)
 
 for i in range(100):
-	print b.filter(i)
+	print b.filter(i, 0)
 
 print " "
 

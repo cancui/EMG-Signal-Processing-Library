@@ -37,32 +37,21 @@ class EMG_filter_basic(object):
     def rectify(self, to_rectify):
         return abs(to_rectify)
 
-    #takes the moving average within scope variable, or all of the data if that is less than scope
-    '''
-    def get_movingAvg(self, data):
-        self.movingAvg.insert(0, data)
-        self.sum_movingAvg += data
-
-        if len(self.movingAvg) > self.scope:
-            self.sum_movingAvg -= self.movingAvg.pop()
-
-        self.val_movingAvg = self.sum_movingAvg / len(self.movingAvg)
-
-        if len(self.movingAvg) < self.scope/2:
-            return -1
-        else:
-            return self.val_movingAvg
-    '''
     #this function is called to input raw data. It returns a filtered value if it has enough samples, and also logs it
-    def filter(self, data):
+    def filter(self, data, reference_data = 0):
         if not self.reference_available:
             filtered_value = self.MA.get_movingAvg(self.rectify(data))
-            #filtered_value = self.get_movingAvg(self.rectify(data))
             self.log_data(filtered_value)
             return filtered_value
 
         else:
-            print "Using a reference hasn't yet been implemented"
+            clean_data = self.LPF_data.filter(data)
+            clean_reference = self.LPF_reference.filter(reference_data)
+            filtered_value = self.MA.get_movingAvg(self.rectify(clean_data - clean_reference))
+            self.log_data(filtered_value)
+            print "Reference used"
+            return filtered_value
+
 
     def test_print(self):
         print "TEST PRINT"
@@ -109,17 +98,9 @@ class EMG_filter(EMG_filter_basic):
     '''
 
     #this function is called to input raw data and return a filtered value, accounting for low-frequency noise and un-normalized data
-    def filter(self, data):
-        '''
-        pkpk = self.get_pkpk(data)
-        #print pkpk
-        return super(EMG_filter, self).filter(data - pkpk['neutral'])
-        #return super(EMG_filter, self).filter(data)
-        '''
-
+    def filter(self, data, reference_data = 0):
         neutral_value = self.PkPk.get_pkpk(data)['neutral']
         return super(EMG_filter, self).filter(data - neutral_value)
-
 
     def test_print(self):
         print "TEST PRINT 222222"
