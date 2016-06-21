@@ -2,14 +2,7 @@ import signal_utilities as su
 
 #Simple filter class assumes no low-frequency noise and data centred at 0. More complex filteres inherit from this.
 class EMG_filter_basic(object):
-
     def __init__(self, sample_frequency = 200, range_ = 0.1, reference_available = False):
-        #self.sample_frequency = sample_frequency               #in Hz
-        #self.range_ = range_                                   #in seconds
-        #self.scope = 1.0 * self.sample_frequency * self.range_       #in number of samples, limits the length of movingAvg    
-        #self.sum_movingAvg = 0                                 #tracks the sum of the moving average
-        #self.val_movingAvg = -1                                #the latest moving average value
-        #self.movingAvg = []                                    #used to store the datapoints for taking a moving average
         self.log = []                                          #used to store filtered data
         self.reference_available = reference_available
         self.MA = su.Moving_Average(length = sample_frequency * range_, return_int = True)
@@ -61,41 +54,8 @@ class EMG_filter(EMG_filter_basic):
 
     def __init__(self, sample_frequency = 200, range_ = 0.5, min_EMG_frequency = 25, max_EMG_frequency = 150, reference_available = False):
         EMG_filter_basic.__init__(self, sample_frequency = sample_frequency, range_ = range_, reference_available = reference_available)
-
-        #self.for_pkpk = []
-
-        #self.neutral = -1                                                   #signal is shifted so that point point is zero
-        #self.min_EMG_frequency = min_EMG_frequency                          #signals below this frequency do not influence the peak to peak measurements
-        #self.max_EMG_frequency = max_EMG_frequency                          #signals above this frequency do not influence the peak to peak measurements
-        #self.min_pk_gap = 1.0/self.max_EMG_frequency * sample_frequency  #the minimun distance in data points that two registered peaks can be 
-        #self.max_pk_gap = 1.0/self.min_EMG_frequency * sample_frequency  #the maximum distance two consecutive peaks can be without the calculated neutral-point shifting significantly 
-        #self.pk_indices = [] 
-        #self.pk_is_convex = []
-        #self.pkpk_stored = 10
-
         self.reference_available = reference_available
         self.PkPk = su.PkPk(sample_frequency = sample_frequency, min_frequency = min_EMG_frequency, max_frequency = max_EMG_frequency)
-
-    '''
-    #returns dictionary of max, min, difference, and neutral values
-    def get_pkpk(self, data):
-        self.for_pkpk.insert(0, data)
-
-        #discards any data beyond two periods of the lowest-frequency wave
-        if len(self.for_pkpk) > (self.max_pk_gap * 2): 
-            self.for_pkpk.pop()
-
-        highest = max(self.for_pkpk)
-        lowest = min(self.for_pkpk)
-        self.neutral = (highest + lowest)/2
-
-        to_return = {'max' : highest, 'min' : lowest, 'pkpk' : highest - lowest, 'neutral' : self.neutral}
-
-        if len(self.for_pkpk) < self.min_pk_gap * 2:
-            return {'max' : -1, 'min' : -1, 'pkpk' : -1, 'neutral' : -1}
-        else:
-            return to_return
-    '''
 
     #this function is called to input raw data and return a filtered value, accounting for low-frequency noise and un-normalized data
     def filter(self, data, reference_data = 0):

@@ -10,11 +10,11 @@ def export(log):
 	filename = create_output_name()
 	file = open(filename, 'w')
 
-	file.write("Created" + str(time.datetime.now()))
+	#file.write("Created" + str(time.datetime.now()))
 
 	row = 0
 	for datapoint in log:
-		file.write(str(row) + ", " + str(datapoint))
+		file.write(str(row) + ", " + str(datapoint) + "\n")
 		row += 1
 
 	file.close()

@@ -5,6 +5,16 @@ from pprint import pprint
 #pprint (vars(f))
 #pprint (vars(f.f))
 
+def get_list(filename):
+	csv = open(filename, "r")
+	csv_list = []
+
+	for line in csv:
+		csv_list.append(int(line))
+
+	return csv_list
+
+
 '''
 
 m = emg.Moving_Average(8)
@@ -29,7 +39,7 @@ for i in range(100):
 print " "
 
 '''
-
+'''
 b = emg.EMG_filter(sample_frequency = 80, range_ = 0.1, reference_available = True)
 
 for i in range(100):
@@ -38,12 +48,20 @@ for i in range(100):
 print " "
 
 pprint(vars(b))
+'''
 
+f = emg.EMG_filter(1000, 1.5)#(sample_frequency = 500, range_ = 0.2)
 
+data = get_list("emgvalues1.csv")
 
+#data2 = [i for i in range (100)]
 
+for item in data:
+	f.filter(item)
 
+#print f.log
 
+csv_generator.export(f.log)
 
 
 

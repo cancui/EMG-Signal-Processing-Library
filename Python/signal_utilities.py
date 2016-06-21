@@ -8,6 +8,13 @@ class Moving_Average(object):
         self.value = -1
         self.return_int = return_int
 
+        #self.sample_frequency = sample_frequency               #in Hz
+        #self.range_ = range_                                   #in seconds
+        #self.scope = 1.0 * self.sample_frequency * self.range_       #in number of samples, limits the length of movingAvg    
+        #self.sum_movingAvg = 0                                 #tracks the sum of the moving average
+        #self.val_movingAvg = -1                                #the latest moving average value
+        #self.movingAvg = []                                    #used to store the datapoints for taking a moving average
+
     def get_movingAvg (self, data):
         self.data.insert(0, data)
         self.data_sum += data
@@ -37,6 +44,27 @@ class LPF(Moving_Average):
         else:
             return self.get_movingAvg(to_filter) 
 
+class Basic_Stats(object):
+    def __init__(self, length):
+        self.length = length
+        self.data_points = []
+        self.total_sum = -1
+        self.average = -1
+        self.stddev = -1
+    
+    def add_data(self, data):
+        self.data_points.insert(0, data)
+        self.total_sum += data
+
+        if len(self.data_points) > self.length:
+            self.total_sum -= self.data_points.pop()
+
+    def get_average(self, data):
+        self.add_data(data)
+        self.average = self.total_sum / len(self.data_points)
+        return self.average
+
+
 class PkPk(object):
     def __init__(self, sample_frequency, min_frequency, max_frequency):
         self.for_pkpk = []
@@ -44,6 +72,12 @@ class PkPk(object):
         self.max_frequency = max_frequency
         self.min_pk_gap = sample_frequency / max_frequency
         self.max_pk_gap = sample_frequency / min_frequency
+
+        #self.neutral = -1                                                   #signal is shifted so that point point is zero
+        #self.min_EMG_frequency = min_EMG_frequency                          #signals below this frequency do not influence the peak to peak measurements
+        #self.max_EMG_frequency = max_EMG_frequency                          #signals above this frequency do not influence the peak to peak measurements
+        #self.min_pk_gap = 1.0/self.max_EMG_frequency * sample_frequency     #the minimun distance in data points that two registered peaks can be 
+        #self.max_pk_gap = 1.0/self.min_EMG_frequency * sample_frequency     #the maximum distance two consecutive peaks can be without the calculated neutral-point shifting significantly 
 
         #self.pk_indices = [] 
         #self.pk_is_convex = []
