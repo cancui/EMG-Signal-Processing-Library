@@ -1,7 +1,33 @@
-import signal_utilities
+import ecg
+from pprint import pprint
+from random import randint
 
-f = signal_utilities.LPF(8,2)
+f = ecg.ECG(sample_frequency = 200)
 
-b = signal_utilities.Moving_Average(8)
+pprint(vars(f))
 
-print "End test"
+signal = []
+
+for beats in range(15):
+	for data_points in range(180):
+		#add very stable data, but random
+		signal.append(randint(200,210))
+	for extra_data in range(randint(1,10)):
+		#add very stable data, but random
+		signal.append(randint(200,210))
+	#add obvious peak data (one high, one low)
+	signal.append(randint(400,410))
+	signal.append(randint(1,10))
+
+'''
+for i in range (551):
+	signal.append(randint(50,60))
+'''
+for point in signal:
+	f.get_BPM(point)
+	#print f.BPM
+
+print f.average_pkpk
+print f.BPM
+
+print "end of test2.py"

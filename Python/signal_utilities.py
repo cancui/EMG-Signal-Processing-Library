@@ -61,7 +61,7 @@ class Basic_Stats(object):
 
     def get_average(self, data):
         self.add_data(data)
-        self.average = self.total_sum / len(self.data_points)
+        self.average = 1.0 * self.total_sum / len(self.data_points)
         return self.average
 
 
