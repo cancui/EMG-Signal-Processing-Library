@@ -11,13 +11,13 @@ signal = []
 for beats in range(15):
 	for data_points in range(180):
 		#add very stable data, but random
-		signal.append(randint(200,210))
+		signal.append(randint(200,210) + data_points + beats * 184)
 	for extra_data in range(randint(1,10)):
 		#add very stable data, but random
-		signal.append(randint(200,210))
+		signal.append(randint(200,210) + data_points + beats * 184)
 	#add obvious peak data (one high, one low)
-	signal.append(randint(400,410))
-	signal.append(randint(1,10))
+	signal.append(randint(400,410) + 184 * (beats + 1))
+	signal.append(randint(1,10) + 184 * (beats + 1))
 
 '''
 for i in range (551):
