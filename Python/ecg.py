@@ -16,7 +16,7 @@ class ECG(object):
 		self.data_points_received = 0
 		self.initialization_data = su.Basic_Stats(length = self.initialization_period) 
 		self.average_pkpk = -1
-		self.pkpk_threshold_ratio = 1.5
+		self.pkpk_threshold_ratio = 2.0
 		self.data_samples_since_beat = 0 
 		self.first_beat = True
 		#self.just_detected_beat = False #if true, prevents another beat from being detected for 1/2 of last beat-to-beat time
@@ -34,10 +34,10 @@ class ECG(object):
 			self.initialize(data)
 			self.data_points_received += 1
 		else:
-			print "not initializing anymore"
+			#print "not initializing anymore"
 			current_pkpk = self.signal_tracker.get_pkpk(data)['pkpk']
 			self.data_samples_since_beat += 1
-			if (current_pkpk > self.average_pkpk * self.pkpk_threshold_ratio) and (self.first_beat == True or self.data_samples_since_beat > 0.5 * self.samples_between_beats.data_points[0]):
+			if (current_pkpk > self.average_pkpk * self.pkpk_threshold_ratio) and (self.first_beat == True or self.data_samples_since_beat > 0.75 * self.samples_between_beats.data_points[0]):
 				#self.just_detected_beat = True
 				if self.first_beat == True:
 					self.samples_between_beats.add_data(self.data_samples_since_beat)
