@@ -68,4 +68,4 @@ class EMG_filter(EMG_filter_basic):
     def test_print2(self):
         super(EMG_filter, self).test_print()
 
-print "End of file"
+print "End of EMG module"

@@ -50,3 +50,5 @@ class ECG(object):
 				self.BPM = 60.0 * self.sample_frequency / average_delay
 
 		return self.BPM
+
+print "End of ECG module"

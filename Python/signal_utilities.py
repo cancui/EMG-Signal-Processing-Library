@@ -3,7 +3,7 @@ class Moving_Average(object):
     def __init__(self, length, return_int = False):
         self.data = []
         self.data_sum = -1
-        self.data_avg = -1
+        #self.data_avg = -1
         self.length = length
         self.value = -1
         self.return_int = return_int

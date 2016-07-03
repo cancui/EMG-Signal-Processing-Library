@@ -2,7 +2,6 @@
 
 This is a specialized signal processing library for wearable technology. 
 
-Currently supports the following sensors:
-- Arduino (EMG, ECG, accelerometer)
-
-Dedicated to my team, Project Atlas. 
+Currently supports the following languages and sensors:
+- Python (EMG, ECG)
+- C (EMG, ECG)
