@@ -32,7 +32,7 @@ int main() {
 	}
 	//test_print(m);
 
-	for (int i = 1; i < 11; i++) {
+	for (int i = 1; i < 21; i++) {
 		printf("%d\n", get_moving_average(m, i));
 	}
 
