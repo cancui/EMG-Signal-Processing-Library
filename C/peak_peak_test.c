@@ -17,9 +17,11 @@ int main() {
 	for (int i = 1; i < 21; i++) {
 		//continue;
 		printf("%d\n", i);
+		get_pkpk(p, i);
+
 	}
 
-	//free_pkpk(p);
+	free_pkpk(p);
 	puts("ending");
 	return 0;
 }

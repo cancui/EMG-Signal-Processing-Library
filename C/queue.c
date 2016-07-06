@@ -19,6 +19,7 @@ CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "queue.h"
 
@@ -250,4 +251,13 @@ QueueValue queue_peek_tail(Queue *queue)
 int queue_is_empty(Queue *queue)
 {
 	return queue->head == NULL;
+}
+
+void queue_print(Queue *queue) {
+	QueueEntry *iterator = queue->head;
+	while(iterator) {
+		printf("[%d]", *((int *)(iterator->data)));
+		iterator = iterator->next;
+	}
+	printf("\n");
 }

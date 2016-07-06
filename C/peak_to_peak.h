@@ -10,7 +10,7 @@ typedef struct PkPk_data_ PkPk_data;
 
 PkPk  	   *new_pkpk(uint16_t sample_frequency, uint16_t min_frequency, uint16_t max_frequency);
 void 		free_pkpk(PkPk *self);
-PkPk_data	get_pkpk(PkPk *self, int data_entry_);
+/*(PkPk_data *)*/ void	get_pkpk(PkPk *self, int data_entry_);
 
 void		test_print(PkPk *self);
 
