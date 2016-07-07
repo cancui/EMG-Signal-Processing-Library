@@ -41,6 +41,8 @@ CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #ifndef ALGORITHM_QUEUE_H
 #define ALGORITHM_QUEUE_H
 
+#include <stdbool.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -157,6 +159,8 @@ QueueValue queue_peek_tail(Queue *queue);
 int queue_is_empty(Queue *queue);
 
 void queue_print(Queue *queue);
+
+bool empty_queue(Queue *self);
 
 #ifdef __cplusplus
 }

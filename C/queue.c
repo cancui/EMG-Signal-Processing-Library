@@ -261,3 +261,38 @@ void queue_print(Queue *queue) {
 	}
 	printf("\n");
 }
+
+bool empty_queue(Queue *self) {
+	if (!self) {
+		return false;
+	}
+	while (!queue_is_empty(self)) {
+		int *popped = queue_pop_tail(self);
+		printf("popped %d from queue\n", *popped);
+		free(popped);
+	}
+	return true;
+}
+
+bool get_queue_max_min(Queue *self, int *max, int *min) {
+	if (!self) {
+		return false;
+	}
+	QueueEntry *iterator = self->head;
+	int cur_max = -10000;
+	int cur_min = 10000;
+	
+	while(iterator) {
+		if (*((int *)(iterator->data)) > cur_max) {
+			cur_max = *((int *)(iterator->data));
+		}
+		if (*((int *)(iterator->data)) < cur_min) {
+			cur_min = *((int *)(iterator->data));
+		}
+		iterator = iterator->next;
+	}
+
+	*max = cur_max;
+	*min = cur_min;
+	return true;
+}
