@@ -268,7 +268,7 @@ bool empty_queue(Queue *self) {
 	}
 	while (!queue_is_empty(self)) {
 		int *popped = queue_pop_tail(self);
-		printf("popped %d from queue\n", *popped);
+		//printf("popped %d from queue\n", *popped);
 		free(popped);
 	}
 	return true;

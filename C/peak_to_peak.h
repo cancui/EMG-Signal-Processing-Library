@@ -1,6 +1,7 @@
 #ifndef PEAK_TO_PEAK_H
 #define PEAK_TO_PEAK_H
 
+#include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -19,7 +20,7 @@ typedef enum {
 	PKPK_MIN,
 	PKPK_PKPK,
 	PKPK_NEUTRAL
-} PKPK_Data_Type;
+} PKPK_Stat;
 
 
 PkPk  	   *new_pkpk(uint16_t sample_frequency, uint16_t min_frequency, uint16_t max_frequency);
@@ -32,6 +33,6 @@ void		test_print(PkPk *self);
 bool		get_queue_max_min(Queue *self, int *max, int *min);
 
 //SWITCH TO USING ENUM
-int			get_data(PkPk_data *package, PKPK_Data_Type attribute/*uint8_t attribute*/);
+int			get_data(PkPk_data *package, PKPK_Stat attribute/*uint8_t attribute*/);
 
 #endif

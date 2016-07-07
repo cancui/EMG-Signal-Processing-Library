@@ -78,68 +78,42 @@ void free_pkpk(PkPk *self) {
 
 PkPk_data *get_pkpk(PkPk *self, int data_entry_ /*, PkPk_data *output*/) {
 	
-	printf("contents of data at beginning of function call: ");
-	queue_print(self->data);
+	//printf("contents of data at beginning of function call: ");
+	//queue_print(self->data);
 	//puts(" ");
 	
 	if (self->cur_length > (self->max_pk_gap * 2)) {
 		int *popped = (int *)queue_pop_tail(self->data);
-		puts("popping from data");
+		//puts("popping from data");
 
 
 		if ((queue_peek_tail(self->max_values)) && *popped == *((int *)queue_peek_tail(self->max_values))) {
-			puts("popping from max values");
+			//puts("popping from max values");
 			int *to_delete = queue_pop_tail(self->max_values);
 			free(to_delete);
 		}  
 		if ((queue_peek_tail(self->min_values)) && *popped == *((int *)queue_peek_tail(self->min_values))) {
-			puts("popping from min values");
+			//puts("popping from min values");
 			int *to_delete = queue_pop_tail(self->min_values);
 			free(to_delete);
 		} //puts("debug");
 
 
-		printf("popped: %d\n", *popped);
+		//printf("popped: %d\n", *popped);
 		free(popped);
 		self->cur_length -= 1;
 
-		printf("contents AFTER popping data: ");
-		queue_print(self->data);
+		//printf("contents AFTER popping data: ");
+		//queue_print(self->data);
 		//puts(" ");
 
 		if (queue_is_empty(self->max_values) || queue_is_empty(self->min_values)) {
 			//scan for new min and max, and push to their queues
-			puts("min or max queue empty, look for new min max");
+			//puts("min or max queue empty, look for new min max");
 			empty_queue(self->max_values);
-			/*while (!queue_is_empty(self->max_values)) {
-				int *popped = queue_pop_tail(self->max_values);
-				printf("popped %d from max values\n", *popped);
-				free(popped);
-			}*/
-
 			empty_queue(self->min_values);
-			/*while (!queue_is_empty(self->min_values)) {
-				int *popped = queue_pop_tail(self->min_values);
-				printf("popped %d from min values\n", *popped);
-				free(popped);
-			}*/
 
 			get_queue_max_min(self->data, &(self->cur_max), &(self->cur_min));
-
-
-			/*
-			QueueEntry *iterator = self->data.head;
-			self->cur_max = -10000;
-			self->cur_min = 10000;
-			while(iterator) {
-				if (iterator->data > self->cur_max) {
-					self->cur_max = iterator->data;
-				}
-				if (iterator->data < self->cur_min) {
-					self->cur_min = iterator->data;
-				}
-				iterator = iterator->next;
-			}*/
 
 			int *cur_max_ = (int *)malloc(sizeof(int));
 			*cur_max_ = self->cur_max;
@@ -154,45 +128,37 @@ PkPk_data *get_pkpk(PkPk *self, int data_entry_ /*, PkPk_data *output*/) {
 
 	int *data_entry = (int *)malloc(sizeof(int)); 	//puts("allocated memory");
 	*data_entry = data_entry_; 					//printf("Set to %d", *data_entry);
-	printf("pushed: %d\n", *data_entry);
+	//printf("pushed: %d\n", *data_entry);
 	queue_push_head(self->data, data_entry); 	//puts("push to head successful");
 	self->cur_length += 1;
 
-	int *for_max_entry = (int *)malloc(sizeof(int));
-	*for_max_entry = *data_entry;
+	if (*data_entry > self->cur_max) {
+		//puts("found new unique max, emptying max queue and pushing new value");
+		int *for_max_entry = (int *)malloc(sizeof(int));
+		*for_max_entry = *data_entry;
 
-	int *for_min_entry = (int *)malloc(sizeof(int));
-	*for_min_entry = *data_entry;
-	
-	if (*for_max_entry > self->cur_max) {
-		puts("found new unique max, emptying max queue and pushing new value");
 		self->cur_max = *for_max_entry;
 		empty_queue(self->max_values);
-		/*
-		while (!queue_is_empty(self->max_values)) {
-			int *popped = queue_pop_tail(self->max_values);
-			printf("popped %d from max values\n", *popped);
-			free(popped);
-		}*/
 		queue_push_head(self->max_values, for_max_entry);
-	} else if (*for_max_entry == self->cur_max) {
-		puts("found new non unique max value");
+	} else if (*data_entry == self->cur_max) {
+		//puts("found new non unique max value");
+		int *for_max_entry = (int *)malloc(sizeof(int));
+		*for_max_entry = *data_entry;
 		queue_push_head(self->max_values, for_max_entry);
 	}
 
-	if (*for_min_entry < self->cur_min) {
-		puts("found new unique min, emptying min queue and pushing new value");
+	if (*data_entry < self->cur_min) {
+		//puts("found new unique min, emptying min queue and pushing new value");
+		int *for_min_entry = (int *)malloc(sizeof(int));
+		*for_min_entry = *data_entry;
+
 		self->cur_min = *for_min_entry;
 		empty_queue(self->min_values);
-
-		/*while (!queue_is_empty(self->min_values)) {
-			int *popped = queue_pop_tail(self->min_values);
-			printf("popped %d from min values\n", *popped);
-			free(popped);
-		}*/
 		queue_push_head(self->min_values, for_min_entry);
-	} else if (*for_min_entry == self->cur_min) {
-		puts("found new non unique min value");
+	} else if (*data_entry == self->cur_min) {
+		//puts("found new non unique min value");
+		int *for_min_entry = (int *)malloc(sizeof(int));
+		*for_min_entry = *data_entry;
 		queue_push_head(self->min_values, for_min_entry);
 	}
 
@@ -203,17 +169,17 @@ PkPk_data *get_pkpk(PkPk *self, int data_entry_ /*, PkPk_data *output*/) {
 	//RETURN POINTER TO STRUCT IN STACK
 	
 	PkPk_data *to_return = (PkPk_data *)malloc(sizeof(PkPk_data));
-	to_return->max = 420;
-	to_return->min = 69;
+	to_return->max = self->cur_max;
+	to_return->min = self->cur_min;
 	to_return->pkpk = to_return->max - to_return->min;
 	to_return->neutral = to_return->pkpk/2 + to_return->min;
-	puts("done init return struct \n");
+	//puts("done init return struct \n");
 	return to_return;
 
 
 }
 
-int	get_data(PkPk_data *package, PKPK_Data_Type attribute/*uint8_t attribute*/) {
+int	get_data(PkPk_data *package, PKPK_Stat attribute/*uint8_t attribute*/) {
 	switch(attribute) {
 		case PKPK_MAX:
 			return package->max;
