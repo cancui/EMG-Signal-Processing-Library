@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 #include "peak_to_peak.h"
-#include "queue.h"
+//#include "queue.h"
 
 struct PkPk_ {
 	Queue *data;
@@ -39,7 +39,7 @@ PkPk *new_pkpk(uint16_t sample_frequency, uint16_t min_frequency, uint16_t max_f
 	to_return->min_values = queue_new();
 
 	if (!to_return->data || !to_return->max_values || !to_return->min_values) {
-		puts("Not enough memory for PkPk's internal queues");
+		puts("Not enough memory for PkPk internal data structures");
 		return NULL;
 	}
 
@@ -179,7 +179,7 @@ PkPk_data *get_pkpk(PkPk *self, int data_entry_ /*, PkPk_data *output*/) {
 
 }
 
-int	get_data(PkPk_data *package, PKPK_Stat attribute/*uint8_t attribute*/) {
+int	unpack_data(PkPk_data *package, PKPK_Stat attribute/*uint8_t attribute*/) {
 	switch(attribute) {
 		case PKPK_MAX:
 			return package->max;
@@ -235,7 +235,7 @@ bool get_queue_max_min(Queue *self, int *max, int *min) {
 			queue_push_head(self->min_values, cur_min_);
 }*/
 
-void test_print(PkPk *self) {
+void test_print_pkpk(PkPk *self) {
 	puts("test print");
 	printf("%d %d\n", self->min_pk_gap, self->max_pk_gap);
 	puts("end test print");

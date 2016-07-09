@@ -18,10 +18,14 @@ Moving_Average *new_moving_average(uint16_t max_length_) {
 	Moving_Average *to_return;
 	to_return = (Moving_Average *) malloc(sizeof(Moving_Average));
 	if (to_return == NULL) {
-		puts("MA returned NULL");
+		puts("Not enough memory to allocate for MA");
 		return NULL;
 	}
 	to_return->data = queue_new(); //puts("Creating queue");
+	if (to_return->data == NULL) {
+		puts("Not enough memory for MA internal data structures");
+		return NULL;
+	}
 	to_return->data_sum = 0;       //puts("Initializing members");
 	to_return->data_avg = 0;
 	to_return->cur_length = 0;
@@ -63,8 +67,12 @@ int get_moving_average(Moving_Average *self, int data_entry_) {
 	}
 }
 
+int latest_entry_moving_average(Moving_Average *self) {
+	return *((int *)queue_peek_head(self->data));
+}
 
-void test_print(Moving_Average *self) {
+
+void test_print_MA(Moving_Average *self) {
 	puts("test print");
 	printf("%d %d %d %d\n", self->data_sum, self->data_avg, self->cur_length, self->max_length);
 	puts("end test print");

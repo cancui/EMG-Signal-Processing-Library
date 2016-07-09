@@ -36,7 +36,7 @@ int main() {
 		printf("%d: ", i);
 		int num = rand()%8;
 		PkPk_data *just_returned = get_pkpk(p, num + i);
-		int after = get_data(just_returned, PKPK_PKPK);
+		int after = unpack_data(just_returned, PKPK_PKPK);
 		printf("returned: %d\n", after);
 		free(just_returned);
 	}
@@ -44,7 +44,7 @@ int main() {
 		printf("%d: ", i);
 		int num = rand()%20;
 		PkPk_data *just_returned = get_pkpk(p, num + i);
-		int after = get_data(just_returned, PKPK_PKPK);
+		int after = unpack_data(just_returned, PKPK_PKPK);
 		printf("returned: %d\n", after);
 		free(just_returned);
 	}
@@ -52,20 +52,20 @@ int main() {
 		printf("%d: ", i);
 		int num = rand()%8;
 		PkPk_data *just_returned = get_pkpk(p, num + i);
-		int after = get_data(just_returned, PKPK_PKPK);
+		int after = unpack_data(just_returned, PKPK_PKPK);
 		printf("returned: %d\n", after);
 		free(just_returned);
 	}
 	for(int i = 0; i<3; i++) {
 		PkPk_data *just_returned = get_pkpk(p, rand()%100 + 100);
-		int after = get_data(just_returned, PKPK_PKPK);
+		int after = unpack_data(just_returned, PKPK_PKPK);
 		printf("returned: %d\n", after);
 	}
 	for (int i = 100; i > 0; i--) {
 		printf("%d: ", i);
 		int num = rand()%8;
 		PkPk_data *just_returned = get_pkpk(p, num + i);
-		int after = get_data(just_returned, PKPK_PKPK);
+		int after = unpack_data(just_returned, PKPK_PKPK);
 		printf("returned: %d\n", after);
 		free(just_returned);
 	}

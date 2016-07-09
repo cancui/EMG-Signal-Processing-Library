@@ -10,7 +10,8 @@ typedef struct Moving_Average_ Moving_Average;
 Moving_Average *new_moving_average(uint16_t max_length_);
 void 			free_moving_average(Moving_Average *self);
 int 			get_moving_average(Moving_Average *self, int data_entry_);
+int				latest_entry_moving_average(Moving_Average *self);
 
-void			test_print(Moving_Average *self);
+void			test_print_MA(Moving_Average *self);
 
 #endif

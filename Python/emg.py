@@ -42,7 +42,7 @@ class EMG_filter_basic(object):
             clean_reference = self.LPF_reference.filter(reference_data)
             filtered_value = self.MA.get_movingAvg(self.rectify(clean_data - clean_reference))
             self.log_data(filtered_value)
-            print "Reference used"
+            #print "Reference used"
             return filtered_value
 
 
@@ -54,13 +54,22 @@ class EMG_filter(EMG_filter_basic):
 
     def __init__(self, sample_frequency = 200, range_ = 0.5, min_EMG_frequency = 25, max_EMG_frequency = 150, reference_available = False):
         EMG_filter_basic.__init__(self, sample_frequency = sample_frequency, range_ = range_, reference_available = reference_available)
-        self.reference_available = reference_available
+        #self.reference_available = reference_available
         self.PkPk = su.PkPk(sample_frequency = sample_frequency, min_frequency = min_EMG_frequency, max_frequency = max_EMG_frequency)
 
     #this function is called to input raw data and return a filtered value, accounting for low-frequency noise and un-normalized data
     def filter(self, data, reference_data = 0):
+        if self.reference_available == True:
+            clean_data = self.LPF_data.filter(data)
+            clean_reference = self.LPF_reference.filter(reference_data)
+            data = clean_data - clean_reference
+        
         neutral_value = self.PkPk.get_pkpk(data)['neutral']
-        return super(EMG_filter, self).filter(data - neutral_value)
+        filtered_value = self.MA.get_movingAvg(self.rectify(data))
+        self.log_data(filtered_value)
+        return filtered_value
+
+        #return super(EMG_filter, self).filter(data - neutral_value)
 
     def test_print(self):
         print "TEST PRINT 222222"

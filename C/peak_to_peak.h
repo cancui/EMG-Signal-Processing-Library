@@ -22,17 +22,14 @@ typedef enum {
 	PKPK_NEUTRAL
 } PKPK_Stat;
 
-
 PkPk  	   *new_pkpk(uint16_t sample_frequency, uint16_t min_frequency, uint16_t max_frequency);
 void 		free_pkpk(PkPk *self);
 PkPk_data  *get_pkpk(PkPk *self, int data_entry_);
+int			unpack_data(PkPk_data *package, PKPK_Stat attribute/*uint8_t attribute*/);
 
-//helper functions
-void		test_print(PkPk *self);
+//helper functions (MAKE HELPERS PRIVATE)
+void		test_print_pkpk(PkPk *self);
 //bool		empty_queue(Queue *self);
 bool		get_queue_max_min(Queue *self, int *max, int *min);
-
-//SWITCH TO USING ENUM
-int			get_data(PkPk_data *package, PKPK_Stat attribute/*uint8_t attribute*/);
 
 #endif

@@ -2,9 +2,9 @@ import signal_utilities as su
 
 #PLAY AROUND WITH MIN_FREQUENCY UNTIL IT WORKS
 class ECG(object):
-	def __init__(self, sample_frequency = 200, range_ = 0.1, reference_available = False):
+	def __init__(self, sample_frequency = 200, reference_available = False): #range_ = 0.1,
 		self.sample_frequency = sample_frequency
-		self.range_ = range_
+		#self.range_ = range_
 		self.reference_available = reference_available
 		self.initialization_period = self.sample_frequency * 3
 
@@ -21,14 +21,18 @@ class ECG(object):
 		self.first_beat = True
 		#self.just_detected_beat = False #if true, prevents another beat from being detected for 1/2 of last beat-to-beat time
 
-	def initialize(self, data):
+	def initialize(self, data, reference_data = 0):
+		if self.reference_available == True:
+			data = data - reference_data
 		current_pkpk = self.signal_tracker.get_pkpk(data)['pkpk']
 		if self.average_pkpk == -1:
 			self.average_pkpk = current_pkpk
 		else:
 			self.average_pkpk = self.initialization_data.get_average(current_pkpk)
 
-	def get_BPM(self, data):
+	def get_BPM(self, data, reference_data = 0):
+		if self.reference_available == True:
+			data = data - reference_data
 		average_delay = 0
 		if self.data_points_received < self.initialization_period:
 			self.initialize(data)
@@ -39,15 +43,21 @@ class ECG(object):
 			self.data_samples_since_beat += 1
 			if (current_pkpk > self.average_pkpk * self.pkpk_threshold_ratio) and (self.first_beat == True or self.data_samples_since_beat > 0.75 * self.samples_between_beats.data_points[0]):
 				#self.just_detected_beat = True
-				if self.first_beat == True:
-					self.samples_between_beats.add_data(self.data_samples_since_beat)
-					self.first_beat = False
+				#if self.first_beat == True:
+				#	self.samples_between_beats.add_data(self.data_samples_since_beat)
+				#	self.first_beat = False
 				
 				average_delay = self.samples_between_beats.get_average(self.data_samples_since_beat) 
 
-				self.data_samples_since_beat = 0
+				
 				#beat detected, disable detection for next ... seconds (fraction of time between most recent beat intervals)
-				self.BPM = 60.0 * self.sample_frequency / average_delay
+				if self.first_beat == True:
+					self.BPM = 60.0 * self.sample_frequency / self.data_samples_since_beat
+					self.first_beat = False
+				else:
+					self.BPM = 60.0 * self.sample_frequency / average_delay
+
+				self.data_samples_since_beat = 0
 
 		return self.BPM
 

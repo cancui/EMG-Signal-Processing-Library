@@ -4,7 +4,7 @@ from random import randint
 
 f = ecg.ECG(sample_frequency = 200)
 
-pprint(vars(f))
+#pprint(vars(f))
 
 signal = []
 
