@@ -2,7 +2,7 @@ import signal_utilities as su
 
 #PLAY AROUND WITH MIN_FREQUENCY UNTIL IT WORKS
 class ECG(object):
-	def __init__(self, sample_frequency = 200, reference_available = False): #range_ = 0.1,
+	def __init__(self, sample_frequency = 200, pkpk_threshold_ratio = 2.0, reference_available = False, autodetect_threshold = True): #range_ = 0.1,
 		self.sample_frequency = sample_frequency
 		#self.range_ = range_
 		self.reference_available = reference_available
@@ -10,16 +10,23 @@ class ECG(object):
 
 		self.samples_between_beats = su.Basic_Stats(length = 3) #sized two or three, averaged to get BPM
 		#self.samples_between_beats.add_data(0)
-		self.signal_tracker = su.PkPk(sample_frequency = sample_frequency, min_frequency = self.sample_frequency / 20, max_frequency = self.sample_frequency / 10) #PLAY AROUND WITH MIN_FREQUENCY UNTIL IT WORKS
+		self.signal_tracker = su.PkPk(sample_frequency = sample_frequency, min_frequency = self.sample_frequency / 20, max_frequency = self.sample_frequency / 8) #PLAY AROUND WITH MIN_FREQUENCY UNTIL IT WORKS
 		self.BPM = 0
 
 		self.data_points_received = 0
 		self.initialization_data = su.Basic_Stats(length = self.initialization_period) 
 		self.average_pkpk = -1
 		self.pkpk_threshold_ratio = 2.0
+		self.autodetect_ratio = 0.2
 		self.data_samples_since_beat = 0 
 		self.first_beat = True
 		#self.just_detected_beat = False #if true, prevents another beat from being detected for 1/2 of last beat-to-beat time
+
+		self.autodetect_threshold = autodetect_threshold
+		self.init_maxs = su.Moving_Average(length = sample_frequency / 40, return_int = True)
+		init_maxs_average = 0;
+		#self.init_mins = su.Moving_Average(length = sample_frequency / 40, return_int = True)
+		#init_mins_average = 0;
 
 	def initialize(self, data, reference_data = 0):
 		if self.reference_available == True:
@@ -29,6 +36,17 @@ class ECG(object):
 			self.average_pkpk = current_pkpk
 		else:
 			self.average_pkpk = self.initialization_data.get_average(current_pkpk)
+
+		if self.autodetect_threshold == True:
+			if len(self.init_maxs.data) == 0 or data >= self.init_maxs.data[-1]:
+				self.init_maxs_average = self.init_maxs.get_movingAvg(data)
+
+			#if len(self.init_mins.data) == 0 or data <= self.init_mins.data[-1]:
+			#	self.init_mins_average = self.init_mins.get_movingAvg(data)
+
+			if self.data_points_received == self.initialization_period - 1:
+				self.pkpk_threshold_ratio = self.autodetect_ratio * self.init_maxs_average / self.average_pkpk  #be able to set both thresholds
+				#print "CALCULATED THRESHOLD: ", self.pkpk_threshold_ratio
 
 	def get_BPM(self, data, reference_data = 0):
 		if self.reference_available == True:

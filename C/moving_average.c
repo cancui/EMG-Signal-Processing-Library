@@ -58,7 +58,7 @@ int get_moving_average(Moving_Average *self, int data_entry_) {
 
 	self->data_avg = self->data_sum / self->cur_length;
 
-	if (self->cur_length < (self->max_length < 2)) {
+	if (self->cur_length < (self->max_length / 8)) {
 		//printf("%d\n", data_entry_);
 		return data_entry_;
 	} else {
@@ -67,10 +67,17 @@ int get_moving_average(Moving_Average *self, int data_entry_) {
 	}
 }
 
-int latest_entry_moving_average(Moving_Average *self) {
+int newest_entry_moving_average(Moving_Average *self) {
 	return *((int *)queue_peek_head(self->data));
 }
 
+int oldest_entry_moving_average(Moving_Average *self){
+	return *((int *)queue_peek_tail(self->data));
+}
+
+bool is_empty_moving_average(Moving_Average *self) {
+	return queue_is_empty(self->data);
+}
 
 void test_print_MA(Moving_Average *self) {
 	puts("test print");

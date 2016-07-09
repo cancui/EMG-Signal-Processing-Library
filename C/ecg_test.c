@@ -7,12 +7,21 @@
 int main() {
 	puts("Starting ECG test");
 
-	ECG *e = new_ECG(20, REFERENCE_UNAVAILABLE);
+	ECG *e = new_ECG(200, 1.8, REFERENCE_AVAILABLE, AUTODETECT_THRESHOLD_ON);
 	
-	for (int i = 1; i <= 70; i++) {
-		
-		int bpm = get_BPM(e, i);
-		printf("%d: %d\n", i, bpm);
+	for (int i = 1; i <= 20; i++) {
+		for (int j = 1; j <= 170; j++) {
+
+
+			int bpm = get_BPM_r(e, rand() % 20 + 100, -50);
+			printf("%d: %d\n", i * 180 + j, bpm);
+		}
+		for (int j = 1; j <= 10; j++) {
+
+
+			int bpm = get_BPM_r(e, rand() % 80 + 60, -50);
+			printf("%d: %d\n", i * 180 + 170 + j, bpm);
+		}	
 	}
 
 	free_ECG(e);

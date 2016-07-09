@@ -19,11 +19,18 @@ struct ECG_ {
 	int BPM;
 
 	float pkpk_threshold_ratio;
+	float autodetect_ratio;
 	uint16_t data_samples_since_beat;
 	bool first_beat;
+
+	Autodetect_Threshold autodetect;
+	Moving_Average *init_maxs;
+	int init_maxs_average;
+	//Moving_Average *init_mins;
+	//int init_mins_average;
 };
 
-ECG *new_ECG(uint16_t sample_frequency_, Reference_Availability reference_availability_) {
+ECG *new_ECG(uint16_t sample_frequency_, float pkpk_threshold_ratio_, Reference_Availability reference_availability_, Autodetect_Threshold autodetect_) {
 	ECG *to_return = (ECG *)malloc(sizeof(ECG));
 	
 	if (to_return == NULL) {
@@ -31,7 +38,7 @@ ECG *new_ECG(uint16_t sample_frequency_, Reference_Availability reference_availa
 		return NULL;
 	}
 
-	to_return->signal_tracker = new_pkpk(sample_frequency_, sample_frequency_ / 20, sample_frequency_ / 10);
+	to_return->signal_tracker = new_pkpk(sample_frequency_, sample_frequency_ / 20, sample_frequency_ / 8);
 	to_return->samples_between_beats = new_moving_average(3);
 
 	if (to_return->signal_tracker == NULL || to_return->samples_between_beats == NULL) {
@@ -48,9 +55,22 @@ ECG *new_ECG(uint16_t sample_frequency_, Reference_Availability reference_availa
 	to_return->average_pkpk = -1;
 	to_return->BPM = -1;
 
-	to_return->pkpk_threshold_ratio = 2.0;
+	to_return->pkpk_threshold_ratio = pkpk_threshold_ratio_; //2.0 is a good value for this
+	to_return->autodetect_ratio = 0.4;
 	to_return->data_samples_since_beat = 0;
 	to_return->first_beat = true;
+
+	to_return->autodetect = autodetect_;
+	if (to_return->autodetect == AUTODETECT_THRESHOLD_ON) {
+		to_return->init_maxs = new_moving_average(sample_frequency_ / 40);
+		//to_return->init_mins = new_moving_average(sample_frequency_ / 40);
+	} else {
+		to_return->init_maxs = NULL;
+		//to_return->init_mins = NULL;
+	}
+
+	to_return->init_maxs_average = 0;
+	//to_return->init_mins_average = 0;
 
 	return to_return;
 }
@@ -59,6 +79,15 @@ void free_ECG(ECG *self) {
 	puts("Freeing ECG");
 	free_pkpk(self->signal_tracker);
 	free_moving_average(self->samples_between_beats);
+
+	if (self->init_maxs != NULL) {
+		free_moving_average(self->init_maxs);
+	}
+	/*
+	if (self->init_mins != NULL) {
+		free_moving_average(self->init_mins);
+	}*/
+
 	free(self);
 }
 
@@ -68,10 +97,28 @@ void initialize_ECG(ECG *self, int data) {
 	} 
 	
 	int current_pkpk = unpack_data(get_pkpk(self->signal_tracker, data), PKPK_PKPK);
+	printf("current pkpk during init: %d\n", current_pkpk);
 	self->init_sum += current_pkpk;
 
 	self->init_counter++;
 	self->average_pkpk = self->init_sum / self->init_counter;
+
+	if (self->autodetect == AUTODETECT_THRESHOLD_ON) {
+		if (is_empty_moving_average(self->init_maxs) || current_pkpk >= oldest_entry_moving_average(self->init_maxs)) {
+			self->init_maxs_average = get_moving_average(self->init_maxs, current_pkpk);
+		}
+		/*
+		if (true || is_empty_moving_average(self->init_mins) || current_pkpk <= oldest_entry_moving_average(self->init_mins)) {
+			printf("latest min: %d\n", current_pkpk);
+			self->init_mins_average = get_moving_average(self->init_mins, current_pkpk);
+		}*/
+
+		if (self->init_counter == self->initialization_period - 1) {
+			self->pkpk_threshold_ratio = self->autodetect_ratio * self->init_maxs_average / self->average_pkpk; 
+			printf("INIT MAX AVERAGE: %d \n", self->init_maxs_average /*, self->init_mins_average*/);
+			printf("THE CALCULATED THRESHOLD IS %f\n", self->pkpk_threshold_ratio);
+		} 
+	}
 }
 
 int get_BPM(ECG *self, int data) {
@@ -87,7 +134,7 @@ int get_BPM(ECG *self, int data) {
 	self->data_samples_since_beat++;
 
 	if ((current_pkpk > self->average_pkpk * self->pkpk_threshold_ratio) && 
-		(self->first_beat == true || self->data_samples_since_beat > 0.75 * latest_entry_moving_average(self->samples_between_beats))) {
+		(self->first_beat == true || self->data_samples_since_beat > 0.75 * newest_entry_moving_average(self->samples_between_beats))) {
 		//if (self->first_beat == true) {
 		//	average_delay = get_moving_average(self->samples_between_beats, self->data_samples_since_beat);
 		//	self->first_beat = false;
@@ -108,17 +155,10 @@ int get_BPM(ECG *self, int data) {
 	return self->BPM;
 }
 
-
-
-/*
-
-void initialize_ECG_r(ECG *self, int data, int reference) {
-
-}
-
 int get_BPM_r(ECG *self, int data, int reference) {
 	if (self->reference_availability == REFERENCE_UNAVAILABLE) {
-
+		return -1;
 	}
+	data = data - reference;
+	return get_BPM(self, data);
 }
-*/
