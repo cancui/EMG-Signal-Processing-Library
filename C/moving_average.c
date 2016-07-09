@@ -39,6 +39,7 @@ void free_moving_average(Moving_Average *self) {
 	puts("freeing MA");
 	queue_free(self->data);
 	free(self);
+	self = NULL;
 }
 
 int get_moving_average(Moving_Average *self, int data_entry_) {

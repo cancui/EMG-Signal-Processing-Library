@@ -10,7 +10,7 @@ struct ECG_ {
 	Moving_Average *samples_between_beats;
 
 	uint16_t sample_frequency;
-	Reference_Availability reference_availability;
+	ECG_OPTIONS reference_availability;
 
 	uint16_t initialization_period;
 	uint16_t init_counter;
@@ -23,14 +23,14 @@ struct ECG_ {
 	uint16_t data_samples_since_beat;
 	bool first_beat;
 
-	Autodetect_Threshold autodetect;
+	ECG_OPTIONS autodetect;
 	Moving_Average *init_maxs;
 	int init_maxs_average;
 	//Moving_Average *init_mins;
 	//int init_mins_average;
 };
 
-ECG *new_ECG(uint16_t sample_frequency_, float pkpk_threshold_ratio_, Reference_Availability reference_availability_, Autodetect_Threshold autodetect_) {
+ECG *new_ECG(uint16_t sample_frequency_, float pkpk_threshold_ratio_, ECG_OPTIONS reference_availability_, ECG_OPTIONS autodetect_) {
 	ECG *to_return = (ECG *)malloc(sizeof(ECG));
 	
 	if (to_return == NULL) {
@@ -89,6 +89,7 @@ void free_ECG(ECG *self) {
 	}*/
 
 	free(self);
+	self = NULL;
 }
 
 void initialize_ECG(ECG *self, int data) {
@@ -117,6 +118,8 @@ void initialize_ECG(ECG *self, int data) {
 			self->pkpk_threshold_ratio = self->autodetect_ratio * self->init_maxs_average / self->average_pkpk; 
 			printf("INIT MAX AVERAGE: %d \n", self->init_maxs_average /*, self->init_mins_average*/);
 			printf("THE CALCULATED THRESHOLD IS %f\n", self->pkpk_threshold_ratio);
+			free_moving_average(self->init_maxs);
+			self->init_maxs = NULL;
 		} 
 	}
 }

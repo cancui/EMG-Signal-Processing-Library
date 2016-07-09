@@ -35,7 +35,8 @@ peak_peak_test.exe: queue.c peak_to_peak.c peak_peak_test.c
 ecg:
 	$(CC) -o ecg_test.exe $(CO) ecg_test.c ecg.c peak_to_peak.c moving_average.c queue.c 	
 
-
+emg:
+	$(CC) -o emg_test.exe $(CO) emg_test.c emg.c peak_to_peak.c moving_average.c queue.c 	
 
 
 

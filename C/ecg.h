@@ -5,18 +5,25 @@
 #include "moving_average.h"
 
 typedef struct ECG_ ECG;
-
+/*
 typedef enum {
 	REFERENCE_AVAILABLE,
 	REFERENCE_UNAVAILABLE
-} Reference_Availability;
+} ECG_Reference_Availability;
 
 typedef enum {
 	AUTODETECT_THRESHOLD_ON,
 	AUTODETECT_THRESHOLD_OFF
 } Autodetect_Threshold;
+*/
+typedef enum {
+	REFERENCE_AVAILABLE,
+	REFERENCE_UNAVAILABLE,
+	AUTODETECT_THRESHOLD_ON,
+	AUTODETECT_THRESHOLD_OFF
+} ECG_OPTIONS;
 
-ECG *new_ECG(uint16_t sample_frequency_, float pkpk_threshold_ratio_, Reference_Availability reference_availability_, Autodetect_Threshold autodetect_);
+ECG *new_ECG(uint16_t sample_frequency_, float pkpk_threshold_ratio_, ECG_OPTIONS reference_availability_, ECG_OPTIONS autodetect_);
 void free_ECG(ECG *self);
 
 void initialize_ECG(ECG *self, int data);

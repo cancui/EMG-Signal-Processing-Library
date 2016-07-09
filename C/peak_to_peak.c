@@ -74,6 +74,7 @@ void free_pkpk(PkPk *self) {
 	queue_free(self->max_values);
 	queue_free(self->min_values);
 	free(self);
+	self = NULL;
 }
 
 PkPk_data *get_pkpk(PkPk *self, int data_entry_ /*, PkPk_data *output*/) {
