@@ -65,7 +65,7 @@ class EMG_filter(EMG_filter_basic):
             data = clean_data - clean_reference
         
         neutral_value = self.PkPk.get_pkpk(data)['neutral']
-        filtered_value = self.MA.get_movingAvg(self.rectify(data))
+        filtered_value = self.MA.get_movingAvg(self.rectify(data - neutral_value))
         self.log_data(filtered_value)
         return filtered_value
 

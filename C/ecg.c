@@ -30,7 +30,11 @@ struct ECG_ {
 	//int init_mins_average;
 };
 
-ECG *new_ECG(uint16_t sample_frequency_, float pkpk_threshold_ratio_, ECG_OPTIONS reference_availability_, ECG_OPTIONS autodetect_) {
+ECG *new_ECG(	uint16_t sample_frequency_, 
+				float pkpk_threshold_ratio_, 
+				ECG_OPTIONS reference_availability_, 
+				ECG_OPTIONS autodetect_) 
+{
 	ECG *to_return = (ECG *)malloc(sizeof(ECG));
 	
 	if (to_return == NULL) {
@@ -39,7 +43,7 @@ ECG *new_ECG(uint16_t sample_frequency_, float pkpk_threshold_ratio_, ECG_OPTION
 	}
 
 	to_return->signal_tracker = new_pkpk(sample_frequency_, sample_frequency_ / 20, sample_frequency_ / 8);
-	to_return->samples_between_beats = new_moving_average(3);
+	to_return->samples_between_beats = new_moving_average(2); //used to be 3
 
 	if (to_return->signal_tracker == NULL || to_return->samples_between_beats == NULL) {
 		puts("Not enough memory for ECG internal data structures");
@@ -75,7 +79,8 @@ ECG *new_ECG(uint16_t sample_frequency_, float pkpk_threshold_ratio_, ECG_OPTION
 	return to_return;
 }
 
-void free_ECG(ECG *self) {
+void free_ECG( ECG *self ) 
+{
 	puts("Freeing ECG");
 	free_pkpk(self->signal_tracker);
 	free_moving_average(self->samples_between_beats);
@@ -92,13 +97,15 @@ void free_ECG(ECG *self) {
 	self = NULL;
 }
 
-void initialize_ECG(ECG *self, int data) {
+void initialize_ECG( ECG *self, 
+					 int data ) 
+{
 	if (self->init_counter >= self->initialization_period) {
 		return;
 	} 
 	
 	int current_pkpk = unpack_data(get_pkpk(self->signal_tracker, data), PKPK_PKPK);
-	printf("current pkpk during init: %d\n", current_pkpk);
+	//printf("current pkpk during init: %d\n", current_pkpk);
 	self->init_sum += current_pkpk;
 
 	self->init_counter++;
@@ -116,16 +123,16 @@ void initialize_ECG(ECG *self, int data) {
 
 		if (self->init_counter == self->initialization_period - 1) {
 			self->pkpk_threshold_ratio = self->autodetect_ratio * self->init_maxs_average / self->average_pkpk; 
-			printf("INIT MAX AVERAGE: %d \n", self->init_maxs_average /*, self->init_mins_average*/);
-			printf("THE CALCULATED THRESHOLD IS %f\n", self->pkpk_threshold_ratio);
-			free_moving_average(self->init_maxs);
-			self->init_maxs = NULL;
+			//printf("INIT MAX AVERAGE: %d \n", self->init_maxs_average /*, self->init_mins_average*/);
+			//printf("THE CALCULATED THRESHOLD IS %f\n", self->pkpk_threshold_ratio);
+			//free_moving_average(self->init_maxs); //causes seg fault after init period
+			//self->init_maxs = NULL;
 		} 
 	}
 }
 
-int get_BPM(ECG *self, int data) {
-	
+int get_BPM(ECG *self, int data) 
+{
 	int average_delay = 0; //this variable will eventually hold the BPM value and be returned
 
 	if (self->init_counter < self->initialization_period) {

@@ -18,7 +18,13 @@ struct EMG_ {
 
 };
 
-EMG *new_EMG(uint16_t sample_frequency_, float range_, uint16_t min_EMG_frequency_, uint16_t max_EMG_frequency_, EMG_OPTIONS remove_low_frequency_, EMG_OPTIONS reference_available_) {
+EMG *new_EMG(	uint16_t sample_frequency_, 
+				float range_, 
+				uint16_t min_EMG_frequency_, 
+				uint16_t max_EMG_frequency_, 
+				EMG_OPTIONS remove_low_frequency_, 
+				EMG_OPTIONS reference_available_) 
+{
 	EMG *to_return = (EMG *)malloc(sizeof(EMG));
 	if (!to_return) {
 		puts("Could not allocate memory for EMG");
@@ -59,7 +65,8 @@ EMG *new_EMG(uint16_t sample_frequency_, float range_, uint16_t min_EMG_frequenc
 	return to_return;
 }
 
-void free_EMG(EMG *self) {
+void free_EMG(EMG *self) 
+{
 	puts("Freeing EMG");
 	free_moving_average(self->MA);
 	self->MA = NULL;
@@ -79,7 +86,9 @@ void free_EMG(EMG *self) {
 	self = NULL;
 }
 
-int filter_EMG(EMG *self, int data) {
+int filter_EMG(	EMG *self, 
+				int data) 
+{
 	if (self->remove_low_frequency == HIGH_PASS_FILTER_ON) {
 		//puts("on");
 		int neutral_value = unpack_data(get_pkpk(self->PkPk, data), PKPK_NEUTRAL);
@@ -89,7 +98,10 @@ int filter_EMG(EMG *self, int data) {
 	}
 }
 
-int filter_EMG_r(EMG *self, int data, int reference_data) {
+int filter_EMG_r(	EMG *self, 
+					int data, 
+					int reference_data) 
+{
 	if (self->reference_available != REFERENCE_AVAILABLE) {
 		return -1;
 	}
