@@ -1,12 +1,13 @@
-# EMG-ECG-Signal-Processing-Library
+# EMG/ECG Signal Processing Library
 
 -This is a specialized real-time signal processing library for EMG and ECG signals.
 -Most of the algorithms used run in constant time, O(c)
 -Currently supports the following languages: C, Python
 
 C DOCUMENTATION
+-------------------------------------------
 
-1) Setting up
+### 1) Setting up
 Copy the following .c and .h files into your working directory:
 -emg
 -ecg
@@ -18,11 +19,12 @@ This library was developed using the GCC compiler with the -std=c11 option. It i
 
 
 
-2) EMG PROCESSING
+### 2) EMG PROCESSING
 The library provides a filter which removes high and low frequency noise from a signal, rectifies it with respect to the centre point, and takes a moving average.
 This filtered signal is indirectly proportional to the effort exherted by the muscle the sensor is attached to.
 
 -------------------------------------------
+
 typedef enum {
 	REFERENCE_AVAILABLE,
 	REFERENCE_UNAVAILABLE,
@@ -31,7 +33,9 @@ typedef enum {
 } EMG_OPTIONS;
 
 An enum of the options which must be specified to create a new EMG struct
+
 -------------------------------------------
+
 EMG *new_EMG(	uint16_t sample_frequency_, 
 				float range_, 
 				uint16_t min_EMG_frequency_, 
@@ -64,11 +68,15 @@ The constructor. Returns a pointer to the newly created EMG struct
 -reference_available_
 	This specifies whether a reference signal will be provided (in which case filter_EMG_r will be called instead of filter_EMG)
 	Can be either REFERENCE_AVAILABLE or REFERENCE_UNAVAILABLE
+
 -------------------------------------------
+
 void free_EMG(EMG *self);
 
 The destructor. Takes an EMG pointer as argument
+
 -------------------------------------------
+
 int  filter_EMG(EMG *self, int data);
 
 This function is used to input the most recent data point and returns the most recent filtered EMG value
@@ -80,21 +88,24 @@ This function must be called at the frequency specified in the constructor
 	A A pointer to the EMG struct
 -data
 	The most recent raw data point
+
 -------------------------------------------
+
 int  filter_EMG_r(EMG *self, int data, int reference_data);
 
 This is the same as filter_EMG, except a reference data point must also be specified
 This can only be called if REFERENCE_AVAILABLE was specified in the constructor
 -reference_data
 	The most recent reference data point
+
 -------------------------------------------
 
 
-
-3) ECG PROCESSING
+### 3) ECG PROCESSING
 This library provides a tool to derive the BPM indicated by an ECG signal.
 
 -------------------------------------------
+
 typedef enum {
 	REFERENCE_AVAILABLE,
 	REFERENCE_UNAVAILABLE,
@@ -103,7 +114,9 @@ typedef enum {
 } ECG_OPTIONS;
 
 An enum for the options that must be specified when creating a new ECG struct
+
 -------------------------------------------
+
 ECG *new_ECG(uint16_t sample_frequency_, 
 	 		 float pkpk_threshold_ratio_, 
 			 ECG_OPTIONS reference_availability_, 
@@ -126,17 +139,23 @@ This is the constructor for the ECG struct. It returns a pointer to the newly cr
 	Specifies whether pkpk_threshold_ratio_ will be specified by the user, or calculated automatically. 
 	This argument can either be AUTODETECT_THRESHOLD_ON or AUTODETECT_THRESHOLD_OFF. 
 	Note that autodetect is not perfect, so it's typically more accurate to manually set an experimentally obtained pkpk_threshold_ratio_.
+
 -------------------------------------------
+
 void free_ECG(ECG *self);
 
 The destructor for the ECG struct. Takes an ECG struct as its argument
+
 -------------------------------------------
+
 void initialize_ECG(ECG *self, 
 					int data);
 
 This function is automatically called every time get_BPM or get_BPM_r is called, for the first 3 seconds of operation. 
 This is necessary to initialize the BPM detection feature. It is not necessary for the user to call this function. 
+
 -------------------------------------------
+
 int get_BPM(ECG *self, 
 			int data);
 
@@ -148,12 +167,15 @@ This function returns the BPM indicated by the ECG signal supplied to it.
 
 Note that it takes 5-6 seconds of operation to achieve full accuracy. 
 For full accuracy, this function must be called at the frequency specified when the ECG struct was created
+
 -------------------------------------------
+
 int get_BPM_r(ECG *self, 
 		      int data, 
 			  int reference);
-			  
+
 This function is the alternative to get_BPM, when a reference was specified as available. 
 -reference
 	The most recent reference data point of the signal
+
 -------------------------------------------
