@@ -32,7 +32,7 @@ typedef enum {
 	HIGH_PASS_FILTER_OFF
 } EMG_OPTIONS;
 ```
-An enum of the options which must be specified to create a new EMG struct
+An enum of the options which must be specified to create a new EMG struct.
 
 -------------------------------------------
 ```c
@@ -43,7 +43,7 @@ EMG *new_EMG(	uint16_t sample_frequency_,
 				EMG_OPTIONS remove_low_frequency_, 
 				EMG_OPTIONS reference_available_);
 ```
-The constructor. Returns a pointer to the newly created EMG struct
+The constructor. Returns a pointer to the newly created EMG struct.
 - sample_frequency_
        *	The constant frequency of which data will be given to the EMG data structure (frequency in which filter_EMG will be called).
        *	Specified in Hz
@@ -74,17 +74,13 @@ The constructor. Returns a pointer to the newly created EMG struct
 ```c
 void free_EMG(EMG *self);
 ```
-The destructor. Takes an EMG pointer as argument
+The destructor. Takes an EMG pointer as argument.
 
 -------------------------------------------
 ```c
 int  filter_EMG(EMG *self, int data);
 ```
-- This function is used to input the most recent data point and returns the most recent filtered EMG value
-- High and low frequency noise is removed from the signal. The signal is then rectified with respect to it's centre. 
-- A moving average filter returns the completely filtered EMG signal.
-- The returned signal is indirectly proportional to the effort exherted by the muscle
-- This function must be called at the frequency specified in the constructor
+This function is used to input the most recent data point and returns the most recent filtered EMG value. High and low frequency noise is removed from the signal. The signal is then rectified with respect to it's centre. A moving average filter returns the completely filtered EMG signal. The returned signal is indirectly proportional to the effort exherted by the muscle. This function must be called at the frequency specified in the constructor.
 
 - self
 	* A A pointer to the EMG struct
@@ -95,8 +91,7 @@ int  filter_EMG(EMG *self, int data);
 ```c
 int  filter_EMG_r(EMG *self, int data, int reference_data);
 ```
-- This is the same as filter_EMG, except a reference data point must also be specified
-- This can only be called if REFERENCE_AVAILABLE was specified in the constructor
+This is the same as filter_EMG, except a reference data point must also be specified. This can only be called if REFERENCE_AVAILABLE was specified in the constructor.
 
 - reference_data
 	* The most recent reference data point
@@ -116,7 +111,7 @@ typedef enum {
 	AUTODETECT_THRESHOLD_OFF
 } ECG_OPTIONS;
 ```
-An enum for the options that must be specified when creating a new ECG struct
+An enum for the options that must be specified when creating a new ECG struct.
 
 -------------------------------------------
 ```c
@@ -125,7 +120,7 @@ ECG *new_ECG(uint16_t sample_frequency_,
 			 ECG_OPTIONS reference_availability_, 
 			 ECG_OPTIONS autodetect_);
 ```
-This is the constructor for the ECG struct. It returns a pointer to the newly created struct
+This is the constructor for the ECG struct. It returns a pointer to the newly created struct.
 - sample_frequency_ 
 	* This is the constant frequency in which data will be given (the frequency which get_BPM or get_BPM_r will be called)
 - pkpk_threshold_ratio_ 
@@ -145,22 +140,21 @@ This is the constructor for the ECG struct. It returns a pointer to the newly cr
 ```c
 void free_ECG(ECG *self);
 ```
-The destructor for the ECG struct. Takes an ECG struct as its argument
+The destructor for the ECG struct. Takes an ECG struct as its argument.
 
 -------------------------------------------
 ```c
 void initialize_ECG(ECG *self, 
 					int data);
 ```
-- This function is automatically called every time get_BPM or get_BPM_r is called, for the first 3 seconds of operation. 
-- This is necessary to initialize the BPM detection feature. It is not necessary for the user to call this function. 
+This function is automatically called every time get_BPM or get_BPM_r is called, for the first 3 seconds of operation. This is necessary to initialize the BPM detection feature. It is not necessary for the user to call this function. 
 
 -------------------------------------------
 ```c
 int get_BPM(ECG *self, 
 			int data);
 ```
-- This function returns the BPM indicated by the ECG signal supplied to it. 
+This function returns the BPM indicated by the ECG signal supplied to it. 
 
 - self 
 	* A pointer to the ECG struct
@@ -177,6 +171,7 @@ int get_BPM_r(ECG *self,
 			  int reference);
 ```
 This function is the alternative to get_BPM, when a reference was specified as available. 
+
 - reference
 	* The most recent reference data point of the signal
 
