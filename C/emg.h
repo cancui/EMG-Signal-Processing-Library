@@ -56,6 +56,9 @@ void free_EMG(EMG *self);
 
 /*
 This function is used to input the most recent data point and returns the most recent filtered EMG value
+High and low frequency noise is removed from the signal. The signal is then rectified with respect to it's centre. 
+A moving average filter returns the completely filtered EMG signal.
+The returned signal is indirectly proportional to the effort exherted by the muscle
 This function must be called at the frequency specified in the constructor
 -self
 	A A pointer to the EMG struct
