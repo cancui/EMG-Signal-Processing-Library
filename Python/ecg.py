@@ -79,4 +79,4 @@ class ECG(object):
 
 		return self.BPM
 
-print "End of ECG module"
+#print "End of ECG module"
