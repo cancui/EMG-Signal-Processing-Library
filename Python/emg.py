@@ -45,10 +45,6 @@ class EMG_filter_basic(object):
             #print "Reference used"
             return filtered_value
 
-
-    def test_print(self):
-        print "TEST PRINT"
-
 #extension of EMG_filter_basic that has tools to remove low-frequency noise and normalize the data
 class EMG_filter(EMG_filter_basic):
 
@@ -71,10 +67,4 @@ class EMG_filter(EMG_filter_basic):
 
         #return super(EMG_filter, self).filter(data - neutral_value)
 
-    def test_print(self):
-        print "TEST PRINT 222222"
-
-    def test_print2(self):
-        super(EMG_filter, self).test_print()
-
-print "End of EMG module"
+#print "End of EMG module"
