@@ -108,7 +108,16 @@ This is the same as filter_EMG, except a reference data point must also be speci
 
 
 ### 3) ECG PROCESSING
-This library provides a tool to derive the BPM indicated by an ECG signal.
+- This library provides a tool to derive the BPM indicated by an ECG signal
+- The module uses the following steps to achieve this:
+	* Initialization:
+		1. Find the average peak to peak values (the difference between the maximum and minimum values over a small peroid of a signal) of the signal over the first 5 seconds of operation
+		2. If the autodetect threshold feature is enabled, also find the average of the greatest peak to peak values over this time and calculate the threshold by dividing this value by the average value
+	* Normal operation:
+		1. When the latest peak to peak value of the signal surpasses the average found during initialization multiplied by the threshold, register that instant as a heart beat. 
+		2. Heart now cannot be detected for 1/2 times the interval between the last two beats detected
+		3. Calculate the time since the last heartbeat was detected and store the time
+		4. Take the average of the time between the last 3 heartbeats. Use this value to calculate beats per minute (BPM).
 
 -------------------------------------------
 ```c
