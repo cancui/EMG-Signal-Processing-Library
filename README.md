@@ -1,7 +1,8 @@
 # EMG/ECG Signal Processing Library
 
-- This is a specialized real-time signal processing library for EMG and ECG signals.
-- Most of the algorithms used run in constant time, O(c)
+- This is a specialized real-time signal processing library for EMG and ECG signals
+- This library provides the tools to extract muscle effort information from EMG signals and heart rate from ECG signals in real time
+- Most of the algorithms implemented run in constant time with respect to sampling rate
 - Currently supports the following languages: C, Python
 
 C DOCUMENTATION
@@ -20,8 +21,15 @@ This library was developed using the GCC compiler with the -std=c11 option. It i
 
 
 ### 2) EMG PROCESSING
-The library provides a filter which removes high and low frequency noise from a signal, rectifies it with respect to the centre point, and takes a moving average.
-This filtered signal is indirectly proportional to the effort exherted by the muscle the sensor is attached to.
+- Use the EMG module to extract muscle effort information from an EMG signal
+- This is provides the basis for recognizing gestures through EMG signals. For example, the Myo armband recognizes hand gestures by determining how hard each muscle group in the forearm is flexing. 
+- The module processes the EMG signal using the following steps:
+	1. Filter high frequency noise from signal, and subtract a reference signal from the actual signal if one is provided
+	2. Filter low frequency noise from signal
+	3. Frequencies that are low and high frequency noise are determined by the "min_EMG_frequency_" and "max_EMG_frequency_" constructor arguments
+	4. Normalize and rectify the signal
+	5. Take a moving average of the signal
+- The resulting filtered signal is indirectly proportional to the effort exherted by the muscle the sensor is attached to.
 
 -------------------------------------------
 ```c
@@ -175,4 +183,13 @@ This function is the alternative to get_BPM, when a reference was specified as a
 - reference
 	* The most recent reference data point of the signal
 
+
+
+
+Python DOCUMENTATION
 -------------------------------------------
+- The Python implementation of this library provides the same features as the C implementation
+- The Python implementation uses true objects with member functions, as opposed to structs
+- Most functions and variables have the same name as the C implementation
+- Constant time is not guaranteed in the Python implementation, since some native Python functions are used 
+
