@@ -58,7 +58,15 @@ EMG *new_EMG(	uint16_t sample_frequency_,
 			return NULL;
 		}
 	} else {
-		to_return->LPF_data = NULL;
+		//to_return->LPF_data = NULL;
+		uint16_t length = (0.125 * sample_frequency_ / max_EMG_frequency_ >= 1)?0.125 * sample_frequency_ / max_EMG_frequency_:1;
+		to_return->LPF_data = new_moving_average(length);
+
+		if (!to_return->LPF_data) {
+			puts("Could not allocate memory for internal data structures");
+			return NULL;
+		}
+
 		to_return->LPF_reference = NULL;
 	}
 
@@ -89,6 +97,10 @@ void free_EMG(EMG *self)
 int filter_EMG(	EMG *self, 
 				int data) 
 {
+	if (self->reference_available != REFERENCE_AVAILABLE) {
+		data = get_moving_average(self->LPF_data, data);
+	}
+
 	if (self->remove_low_frequency == HIGH_PASS_FILTER_ON) {
 		//puts("on");
 		int neutral_value = unpack_data(get_pkpk(self->PkPk, data), PKPK_NEUTRAL);

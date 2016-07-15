@@ -25,9 +25,9 @@ This library was developed using the GCC compiler with the -std=c11 option. It i
 - This is provides the basis for recognizing gestures through EMG signals. For example, the Myo armband recognizes hand gestures by determining how hard each muscle group in the forearm is flexing. 
 - The module processes the EMG signal using the following steps:
 	1. Filter high frequency noise from signal, and subtract a reference signal from the actual signal if one is provided
-	2. Filter low frequency noise from signal
+	2. Filter low frequency noise from signal and normalize signal (if HIGH_PASS_FILTER_ON is specified in the constructor)
 	3. Frequencies that are low and high frequency noise are determined by the "min_EMG_frequency_" and "max_EMG_frequency_" constructor arguments
-	4. Normalize and rectify the signal
+	4. Rectify the signal
 	5. Take a moving average of the signal
 - The resulting filtered signal is indirectly proportional to the effort exherted by the muscle the sensor is attached to.
 
@@ -111,13 +111,13 @@ This is the same as filter_EMG, except a reference data point must also be speci
 - This library provides a tool to derive the BPM indicated by an ECG signal
 - The module uses the following steps to achieve this:
 	* Initialization:
-		1. Find the average peak to peak values (the difference between the maximum and minimum values over a small peroid of a signal) of the signal over the first 5 seconds of operation
-		2. If the autodetect threshold feature is enabled, also find the average of the greatest peak to peak values over this time and calculate the threshold by dividing this value by the average value
+		1. Find the average peak to peak values (the difference between the maximum and minimum values over a small peroid of a signal) of the signal over the first 3 seconds of operation
+		2. If the autodetect threshold feature is enabled, also find the average of the greatest peak to peak values over this time and calculate the threshold by dividing this value by the average value and multiplying by a hard-coded fraction (feel free to change this to tune the autodetect feature)
 	* Normal operation:
-		1. When the latest peak to peak value of the signal surpasses the average found during initialization multiplied by the threshold, register that instant as a heart beat. 
+		1. When the latest peak to peak value of the signal surpasses the average found during initialization multiplied by the threshold, that instant is registered as a heart beat. 
 		2. Heart now cannot be detected for 1/2 times the interval between the last two beats detected
-		3. Calculate the time since the last heartbeat was detected and store the time
-		4. Take the average of the time between the last 3 heartbeats. Use this value to calculate beats per minute (BPM).
+		3. Calculate the number of data points since the last heartbeat was detected and store the number
+		4. Take the average of the number of samples between the last 3 heartbeats. Use this value to calculate beats per minute (BPM) with the formula 60*sample_frequency/average_number_of_samples
 
 -------------------------------------------
 ```c
