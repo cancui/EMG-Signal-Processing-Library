@@ -30,7 +30,7 @@ This library was developed using the GCC compiler with the -std=c11 option. It i
 	4. Rectify the signal
 	5. Take a moving average of the signal
 - The resulting filtered signal is indirectly proportional to the effort exherted by the muscle the sensor is attached to.
-- 
+
 ![alt text](https://github.com/cancui/EMG-ECG-Signal-Processing-Library/blob/master/Sample%20Signals/EMG_raw_vs_filtered.jpg "Logo Title Text 1")
 ##### A comparison of a raw EMG input signal vs. processed output signal (sample_frequency_ = 1000, range_ = 0.5, min_EMG_frequency_ = 25, max_EMG_frequency_ = 150, remove_low_frequency_ = HIGH_PASS_FILTER_OFF, reference_available_ = REFERENCE_UNAVAILABLE)
 
