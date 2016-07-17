@@ -29,7 +29,7 @@ This library was developed using the GCC compiler with the -std=c11 option. It i
 	3. Frequencies that are low and high frequency noise are determined by the "min_EMG_frequency_" and "max_EMG_frequency_" constructor arguments
 	4. Rectify the signal
 	5. Take a moving average of the signal
-- The resulting filtered signal is indirectly proportional to the effort exherted by the muscle the sensor is attached to.
+- The resulting filtered signal is indirectly proportional to the effort exerted by the muscle the sensor is attached to.
 
 -------------------------------------------
 
@@ -93,7 +93,7 @@ The destructor. Takes an EMG pointer as argument.
 ```c
 int  filter_EMG(EMG *self, int data);
 ```
-This function is used to input the most recent data point and returns the most recent filtered EMG value. High and low frequency noise is removed from the signal. The signal is then rectified with respect to it's centre. A moving average filter returns the completely filtered EMG signal. The returned signal is indirectly proportional to the effort exherted by the muscle. This function must be called at the frequency specified in the constructor.
+This function is used to input the most recent data point and returns the most recent filtered EMG value. High and low frequency noise is removed from the signal. The signal is then rectified with respect to it's centre. A moving average filter returns the completely filtered EMG signal. The returned signal is indirectly proportional to the effort exerted by the muscle. This function must be called at the frequency specified in the constructor.
 
 - self
 	* A A pointer to the EMG struct
