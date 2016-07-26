@@ -10,14 +10,14 @@ class ECG(object):
         self.reference_available = reference_available
         self.initialization_period = self.sample_frequency * 3
 
-        self.samples_between_beats = su.Basic_Stats(length=3)  # sized two or three, averaged to get BPM
+        self.samples_between_beats = su.BasicStats(length=3)  # sized two or three, averaged to get BPM
         # self.samples_between_beats.add_data(0)
-        self.signal_tracker = su.PkPk(sample_frequency=sample_frequency, min_frequency=self.sample_frequency / 20,
-                                      max_frequency=self.sample_frequency / 8)  # PLAY AROUND WITH MIN_FREQUENCY UNTIL IT WORKS
+        self.signal_tracker = su.PeakToPeak(sample_frequency=sample_frequency, min_frequency=self.sample_frequency / 20,
+                                            max_frequency=self.sample_frequency / 8)  # PLAY AROUND WITH MIN_FREQUENCY UNTIL IT WORKS
         self.BPM = 0
 
         self.data_points_received = 0
-        self.initialization_data = su.Basic_Stats(length=self.initialization_period)
+        self.initialization_data = su.BasicStats(length=self.initialization_period)
         self.average_pkpk = -1
         self.pkpk_threshold_ratio = 2.0
         self.autodetect_ratio = 0.2
@@ -26,7 +26,7 @@ class ECG(object):
         # self.just_detected_beat = False #if true, prevents another beat from being detected for 1/2 of last beat-to-beat time
 
         self.autodetect_threshold = autodetect_threshold
-        self.init_maxs = su.Moving_Average(length=sample_frequency / 40, return_int=True)
+        self.init_maxs = su.MovingAverage(length=sample_frequency / 40, return_int=True)
         init_maxs_average = 0;
 
     # self.init_mins = su.Moving_Average(length = sample_frequency / 40, return_int = True)
@@ -84,4 +84,4 @@ class ECG(object):
 
         return self.BPM
 
-# print "End of ECG module"
+print "End of ECG module"
