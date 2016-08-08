@@ -14,7 +14,7 @@ class MovingAverage(object):
         self.value = -1
         self.return_int = return_int
 
-    def get_MA(self, data):
+    def get_ma(self, data):
         self.data.appendleft(data)
         self.data_sum += data
 
@@ -40,8 +40,7 @@ class ExpMovingAverage(object):
     factors sum to 1)
     Note: As above, MA stands for moving average, and EMA stands for Exponential Moving Average
     """
-
-    def __init__(self, expFactor_=0.5, window_=50):
+    def __init__(self, exponential_factor=0.5, frame_length=50):
         """
         expFactor is what each term is multiplied by each time it is shift right in the current frame
         window is the number of samples that are taken into account when calculating the EMA
@@ -49,13 +48,13 @@ class ExpMovingAverage(object):
         0 < expFactor < 1
         1 < window
         """
-        if 0 < expFactor_ < 1:
-            self.expFactor = float(expFactor_)
+        if 0 < exponential_factor < 1:
+            self.expFactor = exponential_factor
         else:
             raise ValueError("expFactor must be between 0 and 1")
-        if window_ <= 1:
+        if frame_length <= 1:
             raise ValueError("window must be greater than 1")
-        self.window = window_  # Number of samples that are factored into calculation
+        self.window = frame_length  # Number of samples that are factored into calculation
         self.sumEMA = 0  # Initialize the sum of the EMA as zero
         self.EMA = deque([], maxlen=self.window)  # Initialize an empty deque iterable to contain the EMA calculated
         # for the past
@@ -65,7 +64,7 @@ class ExpMovingAverage(object):
         self.weightFactor = sum([self.expFactor ** x for x in range(1, self.window)]) * 1.0  # Value sumEMA is divided
         # by so that sum of EMA weights is normalized to 1
 
-    def get_EMA(self, data_point):
+    def get_ema(self, data_point):
         """
         Calculates the exponential moving average for the most recent points
         """
@@ -82,6 +81,18 @@ class ExpMovingAverage(object):
             self.EMA.appendleft(return_value)
             return return_value
 
+    def pop_log(self, num_to_pop_ema=1):
+        """
+        Since you can't slice in a deque list a list, when popping more than one entries in a list you must repeatedly
+        call the pop deque method.
+        """
+        if num_to_pop_ema == 1:
+            return self.log.pop()
+        to_return = []
+        for _ in range(min(num_to_pop_ema, len(self.log))):
+            to_return.append(self.log.pop())
+        return to_return
+
 
 class LowPassFilter(MovingAverage):
     """
@@ -96,7 +107,7 @@ class LowPassFilter(MovingAverage):
         if self.length < 2:
             return to_filter
         else:
-            return self.get_MA(to_filter)
+            return self.get_ma(to_filter)
 
 
 class BasicStats(object):

@@ -43,16 +43,16 @@ class ECG(object):
 
         if self.autodetect_threshold == True:
             if len(self.init_maxs.data) == 0 or data >= self.init_maxs.data[-1]:
-                self.init_maxs_average = self.init_maxs.get_MA(data)
+                self.init_maxs_average = self.init_maxs.get_ma(data)
 
             # if len(self.init_mins.data) == 0 or data <= self.init_mins.data[-1]:
-            #	self.init_mins_average = self.init_mins.get_MA(data)
+            #	self.init_mins_average = self.init_mins.get_ma(data)
 
             if self.data_points_received == self.initialization_period - 1:
                 self.pkpk_threshold_ratio = self.autodetect_ratio * self.init_maxs_average / self.average_pkpk  # be able to set both thresholds
             # print "CALCULATED THRESHOLD: ", self.pkpk_threshold_ratio
 
-    def get_BPM(self, data, reference_data=0):
+    def get_bpm(self, data, reference_data=0):
         if self.reference_available == True:
             data = data - reference_data
         average_delay = 0
