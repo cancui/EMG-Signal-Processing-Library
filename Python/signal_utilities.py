@@ -54,7 +54,7 @@ class ExpMovingAverage(object):
             raise ValueError("expFactor must be between 0 and 1")
         if frame_length <= 1:
             raise ValueError("window must be greater than 1")
-        self.window = frame_length  # Number of samples that are factored into calculation
+        self.window = int(frame_length)  # Number of samples that are factored into calculation
         self.sumEMA = 0  # Initialize the sum of the EMA as zero
         self.EMA = deque([], maxlen=self.window)  # Initialize an empty deque iterable to contain the EMA calculated
         # for the past

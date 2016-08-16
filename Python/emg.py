@@ -96,9 +96,9 @@ class EMGFilterBasicEMA(object):
     Simple exponential moving average filter class that assumes no low-frequency noise and data centred at 0.
     """
 
-    def __init__(self, sample_frequency=200, range_=0.1, reference_available=False):
+    def __init__(self, sample_frequency=200, range_=0.1, reference_available=False, exponential_factor_=0.5):
         self.reference_available = reference_available
-        self.ema = su.ExpMovingAverage(frame_length=sample_frequency * range_)
+        self.ema = su.ExpMovingAverage(frame_length=sample_frequency * range_, exponential_factor=exponential_factor_)
 
         if reference_available:
             self.LPF_data = su.LowPassFilter(cutoff_frequency=150, sample_frequency=sample_frequency)
@@ -118,7 +118,8 @@ class EMGFilterBasicEMA(object):
 
     def filter(self, data, reference_data=0):
         """
-        This function is called to input raw data. It returns a filtered value if it has enough samples, and also logs it
+        This function is called to input raw data. It returns a filtered value if it has enough samples, and also logs
+        it
         """
         if not self.reference_available:
             return self.ema.get_ema(self.rectify(data))
@@ -144,7 +145,8 @@ class EMGFilterEMA(EMGFilterBasicEMA):
 
     def filter(self, data, reference_data=0):
         """
-        This function is called to input raw data and return a filtered value, accounting for low-frequency noise and un-normalized data
+        This function is called to input raw data and return a filtered value, accounting for low-frequency noise and
+        un-normalized data
         """
         if self.reference_available:
             clean_data = self.LPF_data.filter(data)
