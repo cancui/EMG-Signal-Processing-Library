@@ -1,4 +1,5 @@
-import signal_utilities as su
+from __future__ import print_function, division
+import Python.Filters.signal_utilities as su
 
 
 # PLAY AROUND WITH MIN_FREQUENCY UNTIL IT WORKS
@@ -50,7 +51,7 @@ class ECG(object):
 
             if self.data_points_received == self.initialization_period - 1:
                 self.pkpk_threshold_ratio = self.autodetect_ratio * self.init_maxs_average / self.average_pkpk  # be able to set both thresholds
-            # print "CALCULATED THRESHOLD: ", self.pkpk_threshold_ratio
+            # print("CALCULATED THRESHOLD: {}".format(self.pkpk_threshold_ratio))
 
     def get_bpm(self, data, reference_data=0):
         if self.reference_available == True:
@@ -60,7 +61,7 @@ class ECG(object):
             self.initialize(data)
             self.data_points_received += 1
         else:
-            # print "not initializing anymore"
+            # print("not initializing anymore")
             current_pkpk = self.signal_tracker.get_pkpk(data)['pkpk']
             self.data_samples_since_beat += 1
             if (current_pkpk > self.average_pkpk * self.pkpk_threshold_ratio) and (
@@ -84,4 +85,4 @@ class ECG(object):
 
         return self.BPM
 
-print "End of ECG module"
+print("End of ECG module")

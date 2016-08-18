@@ -1,4 +1,5 @@
-import signal_utilities as su
+from __future__ import print_function, division
+import Python.Filters.signal_utilities as su
 from collections import deque
 
 
@@ -57,7 +58,7 @@ class EMGFilterBasic(object):
             clean_reference = self.LPF_reference.filter(reference_data)
             filtered_value = self.MA.get_ma(self.rectify(clean_data - clean_reference))
             self.log_data(filtered_value)
-            # print "Reference used"
+            # ("Reference used")
             return filtered_value
 
 
@@ -157,4 +158,4 @@ class EMGFilterEMA(EMGFilterBasicEMA):
         return self.ema.get_ema(self.rectify(data - neutral_value))
 
 
-print "End of EMG module"
+print("End of EMG module")

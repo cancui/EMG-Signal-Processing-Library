@@ -206,4 +206,5 @@ Python DOCUMENTATION
 - The Python implementation uses true objects with member functions, as opposed to structs
 - Most functions and variables have the same name as the C implementation
 - Constant time is not guaranteed in the Python implementation, since some native Python functions are used 
+- More details about prototyping with the Python implementation can be found in the README in the Python directory
 

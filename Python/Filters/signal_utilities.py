@@ -1,3 +1,4 @@
+from __future__ import print_function, division
 from collections import deque
 
 
@@ -6,7 +7,6 @@ class MovingAverage(object):
     Encapsulation of a key function that some filters require
     Note: MA stands for moving average
     """
-
     def __init__(self, length, return_int=False):
         self.data = deque([])
         self.data_sum = -1
@@ -61,7 +61,7 @@ class ExpMovingAverage(object):
         self.log = deque([], maxlen=self.window)  # Initialize an empty deque iterable of the unfiltered datapoints
         self.finalFactor = self.expFactor ** self.window  # Precomputed weighting factor applied to the last entry in the
         # EMA sum
-        self.weightFactor = sum([self.expFactor ** x for x in range(1, self.window)]) * 1.0  # Value sumEMA is divided
+        self.weightFactor = sum(self.expFactor ** x for x in range(1, self.window)) * 1.0  # Value sumEMA is divided
         # by so that sum of EMA weights is normalized to 1
 
     def get_ema(self, data_point):
@@ -178,4 +178,4 @@ class PeakToPeak(object):
         pass
 
 
-print "End"
+print("End")
