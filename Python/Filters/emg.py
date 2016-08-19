@@ -12,7 +12,7 @@ class EMGFilterBasic(object):
     def __init__(self, sample_frequency=200, range_=0.1, reference_available=False):
         self.log = deque([])  # Used to store filtered data
         self.reference_available = reference_available
-        self.MA = su.MovingAverage(length=sample_frequency * range_, return_int=True)
+        self.MA = su.MovingAverage(length=sample_frequency * range_, return_int=False)
 
         if reference_available:
             self.LPF_data = su.LowPassFilter(cutoff_frequency=150, sample_frequency=sample_frequency)

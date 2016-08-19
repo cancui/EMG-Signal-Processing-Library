@@ -1,7 +1,9 @@
 import csv
+import datetime
 import os.path
 import matplotlib.pyplot as plt
 import Python.Filters.emg as emg
+import Python.post_filter_data_normalization as data_norm
 
 plt.style.use("ggplot")
 
@@ -17,18 +19,19 @@ inputReader = csv.reader(inputFile)
 
 # Set up the list of filters to test out
 filters = []
-filters.append(emg.EMGFilterBasicEMA(sample_frequency=1000))
+filters.append(emg.EMGFilterBasicEMA(sample_frequency=1000, exponential_factor_=0.5))
 filters.append(emg.EMGFilterBasicEMA(sample_frequency=1000, exponential_factor_=0.75))
-filters.append(emg.EMGFilterBasicEMA(sample_frequency=1000, exponential_factor_=0.85))
 filters.append(emg.EMGFilterBasicEMA(sample_frequency=1000, exponential_factor_=0.9))
+filters.append(emg.EMGFilterBasicEMA(sample_frequency=1000, exponential_factor_=0.925))
+filters.append(emg.EMGFilterBasicEMA(sample_frequency=1000, exponential_factor_=0.95))
+filters.append(emg.EMGFilterBasicEMA(sample_frequency=1000, exponential_factor_=0.975))
+filters.append(emg.EMGFilterBasicEMA(sample_frequency=1000, exponential_factor_=0.985))
+filters.append(emg.EMGFilterBasicEMA(sample_frequency=1000, exponential_factor_=0.99))
+filters.append(emg.EMGFilterBasicEMA(sample_frequency=1000, exponential_factor_=0.999))
 filters.append(emg.EMGFilterBasic(sample_frequency=1000))
 
-# EMA_filter_05 = emg.EMGFilterBasicEMA(sample_frequency=1000)
-# EMA_filter_075 = emg.EMGFilterBasicEMA(sample_frequency=1000, exponential_factor_=0.75)
-# EMA_filter_085 = emg.EMGFilterBasicEMA(sample_frequency=1000, exponential_factor_=0.85)
-# EMA_filter_09 = emg.EMGFilterBasicEMA(sample_frequency=1000, exponential_factor_=0.9)
-# MA_filter = emg.EMGFilterBasic(sample_frequency=1000)
-
+filter_names = ["Unfiltered Data", "EMA 0.5", "EMA 0.75", "EMA 0.9", "EMA 0.925", "EMA 0.95", "EMA 0.975", "EMA 0.985",
+                "EMA 0.99", "EMA 0.999", "MA"]
 
 def call_filter(filter_object, unfiltered_value):
     return_value_ = filter_object.filter(unfiltered_value)
@@ -53,13 +56,16 @@ for row in inputReader:
 # Transpose the values to be plotted
 values_to_plot = list(zip(*values_to_plot))
 
-print("Filtered data has been saved")
+print("Filtered data has been successfully input")
 
-# values_to_plot = []
-# for row in inputReader:
-#     values_to_plot.append(float(row[0]))
+# Trim first 100 entries from file as the moving average based filters are building up a window, and then normalize the
+# data
+for count, dataset in enumerate(values_to_plot):
+    dataset = dataset[100:]
+    values_to_plot[count] = data_norm.normalize(dataset)
 
-# x_axis = [x/sample_frequency for x in range(len(values_to_plot))]
+print("Data has been trimmed and normalized")
+
 x_axis = [x/sample_frequency for x in range(len(values_to_plot[0]))]
 
 num_plots = len(values_to_plot)
@@ -67,15 +73,17 @@ num_plots = len(values_to_plot)
 fig, axarr = plt.subplots(num_plots, sharex=True)
 
 for i in range(num_plots):
-    axarr[i].set_title()
-    axarr[i].plot(x_axis, values_to_plot[i])
-    axarr[i].set_xlim([0.1, 7.5])
-    axarr[i].set_ylim([0, 700])
+    axarr[i].set_title(filter_names[i])
+    axarr[i].scatter(x_axis, values_to_plot[i], s=125)
+    axarr[i].set_xlim([0, 7.5])
+    axarr[i].set_ylim([-4, 4])
 
 fig.suptitle('EMG Filter Comparison', fontsize=36, fontweight='bold')
 
 axarr[num_plots-1].set_xlabel('Time (s)')
-fig.set_size_inches(20, num_plots*5)
-fig.savefig("figure.png", bbox_inches='tight', dpi=100)
+fig.set_size_inches(80, num_plots*5)
+figure_path = os.path.abspath(os.path.join(basepath, '..', 'Sample Signals', 'Plotted Filters', 'Filter Comparison ' +
+                                           str(datetime.datetime.now()) + '.png'))
+fig.savefig(figure_path, bbox_inches='tight', dpi=100)
 
 print("Plot is finished and saved")

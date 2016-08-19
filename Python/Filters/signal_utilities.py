@@ -24,7 +24,7 @@ class MovingAverage(object):
         if self.return_int:
             self.value = self.data_sum // self.length  # preserves integer form
         else:
-            self.value = 1.0 * self.data_sum / self.length
+            self.value = self.data_sum / self.length
 
         if len(self.data) < (self.length / 2):
             return -1
