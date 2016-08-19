@@ -5,6 +5,7 @@
 - The filters are then combined together to work in emg.py and ecg.py, building off on another
 - The library is compatible with Python 2 & 3
 - The only dependencies for this project are Matplotlib for visualizing the effectiveness of filters, and Pytest for running unit tests
+- Plots of the filters tested on EMG data so far can be found [here.](https://drive.google.com/open?id=0ByaKikG9muWTbHRWeFFlZ0J1WTQ)
 
 Creating a new filter:
 ----------------------
