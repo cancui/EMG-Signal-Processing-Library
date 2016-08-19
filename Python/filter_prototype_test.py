@@ -3,7 +3,7 @@ import os.path
 import matplotlib.pyplot as plt
 import Python.Filters.emg as emg
 
-plt.style.use("seaborn-paper")
+plt.style.use("ggplot")
 
 # Define the sample frequency as a global variable to make filtering consistent between filter methods, as well as
 # allow a labeled x-axis for the plot
@@ -53,12 +53,29 @@ for row in inputReader:
 # Transpose the values to be plotted
 values_to_plot = list(zip(*values_to_plot))
 
-x_axis = [x/sample_frequency for x in range(len(values_to_plot))]
+print("Filtered data has been saved")
 
-num_plots = len(values_to_plot[0])
-fig, axarr = plt.subplots(values_to_plot, sharex=True)
+# values_to_plot = []
+# for row in inputReader:
+#     values_to_plot.append(float(row[0]))
 
-for i in range(len(values_to_plot)):
+# x_axis = [x/sample_frequency for x in range(len(values_to_plot))]
+x_axis = [x/sample_frequency for x in range(len(values_to_plot[0]))]
+
+num_plots = len(values_to_plot)
+
+fig, axarr = plt.subplots(num_plots, sharex=True)
+
+for i in range(num_plots):
+    axarr[i].set_title()
     axarr[i].plot(x_axis, values_to_plot[i])
+    axarr[i].set_xlim([0.1, 7.5])
+    axarr[i].set_ylim([0, 700])
 
-plt.show()
+fig.suptitle('EMG Filter Comparison', fontsize=36, fontweight='bold')
+
+axarr[num_plots-1].set_xlabel('Time (s)')
+fig.set_size_inches(20, num_plots*5)
+fig.savefig("figure.png", bbox_inches='tight', dpi=100)
+
+print("Plot is finished and saved")
