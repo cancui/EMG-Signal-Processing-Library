@@ -1,9 +1,9 @@
 import csv
 import datetime
 import os.path
+import post_filter_data_normalization as data_norm
 import matplotlib.pyplot as plt
 import Python.Filters.emg as emg
-import Python.post_filter_data_normalization as data_norm
 
 plt.style.use("ggplot")
 
@@ -13,7 +13,7 @@ sample_frequency = 1000
 
 # Open the sample emg signal file
 basepath = os.path.dirname(__file__)
-filepath = os.path.abspath(os.path.join(basepath, '..', 'Sample Signals', 'emg_values1.csv'))
+filepath = os.path.abspath(os.path.join(basepath, '..', '..', 'Sample Signals', 'emg_raw_values.csv'))
 inputFile = open(filepath)
 inputReader = csv.reader(inputFile)
 
@@ -32,6 +32,7 @@ filters.append(emg.EMGFilterBasic(sample_frequency=1000))
 
 filter_names = ["Unfiltered Data", "EMA 0.5", "EMA 0.75", "EMA 0.9", "EMA 0.925", "EMA 0.95", "EMA 0.975", "EMA 0.985",
                 "EMA 0.99", "EMA 0.999", "MA"]
+
 
 def call_filter(filter_object, unfiltered_value):
     return_value_ = filter_object.filter(unfiltered_value)
@@ -73,7 +74,7 @@ num_plots = len(values_to_plot)
 fig, axarr = plt.subplots(num_plots, sharex=True)
 
 for i in range(num_plots):
-    axarr[i].set_title(filter_names[i])
+    axarr[i].set_title(filter_names[i], fontsize=24)
     axarr[i].scatter(x_axis, values_to_plot[i], s=125)
     axarr[i].set_xlim([0, 7.5])
     axarr[i].set_ylim([-4, 4])
@@ -82,8 +83,8 @@ fig.suptitle('EMG Filter Comparison', fontsize=36, fontweight='bold')
 
 axarr[num_plots-1].set_xlabel('Time (s)')
 fig.set_size_inches(80, num_plots*5)
-figure_path = os.path.abspath(os.path.join(basepath, '..', 'Sample Signals', 'Plotted Filters', 'Filter Comparison ' +
-                                           str(datetime.datetime.now()) + '.png'))
-fig.savefig(figure_path, bbox_inches='tight', dpi=100)
+figure_path = os.path.abspath(os.path.join(basepath, '..', '..', 'Sample Signals', 'Plotted Filters',
+                                           'Filter Comparison ' + str(datetime.datetime.now()) + '.png'))
+fig.savefig(figure_path, bbox_inches='tight', dpi=300)
 
 print("Plot is finished and saved")
