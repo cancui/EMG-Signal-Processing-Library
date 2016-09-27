@@ -10,7 +10,8 @@ struct EMG_ {
 	Moving_Average *MA;
 
 	EMG_OPTIONS remove_low_frequency;
-	PkPk *PkPk;
+	Moving_Average *For_HPF;
+	//PkPk *PkPk;
 
 	EMG_OPTIONS reference_available;
 	Moving_Average *LPF_data;
@@ -20,8 +21,8 @@ struct EMG_ {
 
 EMG *new_EMG(	uint16_t sample_frequency_, 
 				float range_, 
-				uint16_t min_EMG_frequency_, //Consider removing, or keeping it for future use
-				uint16_t max_EMG_frequency_, //Consider removing, or keeping it for future use
+				uint16_t min_EMG_frequency_, 
+				uint16_t max_EMG_frequency_, 
 				EMG_OPTIONS remove_low_frequency_, 
 				EMG_OPTIONS reference_available_) 
 {
@@ -39,13 +40,21 @@ EMG *new_EMG(	uint16_t sample_frequency_,
 
 	to_return->remove_low_frequency = remove_low_frequency_;
 	if (to_return->remove_low_frequency == HIGH_PASS_FILTER_ON) {
+		to_return->For_HPF = new_moving_average(sample_frequency_ * 2 / min_EMG_frequency_);
+		if(!to_return->For_HPF){
+			puts("Could not allocate memory for internal data structures");
+			return NULL;
+		}
+		/*
 		to_return->PkPk = new_pkpk(sample_frequency_, min_EMG_frequency_, max_EMG_frequency_);
 		if (!to_return->PkPk) {
 			puts("Could not allocate memory for internal data structures");
 			return NULL;
 		}
+		*/
 	} else {
-		to_return->PkPk = NULL;
+		to_return->For_HPF = NULL;
+		//to_return->PkPk = NULL;
 	}
 
 	to_return->reference_available = reference_available_;
@@ -78,10 +87,16 @@ void free_EMG(EMG *self)
 	puts("Freeing EMG");
 	free_moving_average(self->MA);
 	self->MA = NULL;
+	if (self->For_HPF) {
+		free_moving_average(self->For_HPF);
+		self->For_HPF = NULL;
+	}
+	/*
 	if (self->PkPk) {
 		free_pkpk(self->PkPk);
 		self->PkPk = NULL;
 	}
+	*/
 	if (self->LPF_data) {
 		free_moving_average(self->LPF_data);
 		self->LPF_data = NULL;
@@ -102,8 +117,8 @@ int filter_EMG(	EMG *self,
 	}
 
 	if (self->remove_low_frequency == HIGH_PASS_FILTER_ON) {
-		//puts("on");
-		int neutral_value = unpack_data(get_pkpk(self->PkPk, data), PKPK_NEUTRAL);
+		//int neutral_value = unpack_data(get_pkpk(self->PkPk, data), PKPK_NEUTRAL);
+		int neutral_value = get_moving_average(self->For_HPF, data);
 		return get_moving_average(self->MA, abs(data - neutral_value));
 	} else {
 		return get_moving_average(self->MA, abs(data));
