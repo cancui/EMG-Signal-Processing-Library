@@ -43,6 +43,7 @@ void free_moving_average(Moving_Average *self) {
 }
 
 int get_moving_average(Moving_Average *self, int data_entry_) {
+
 	int *data_entry; 							//puts("created variable");
 	data_entry = (int *) malloc(sizeof(int)); 	//puts("allocated memory");
 	*data_entry = data_entry_; 					//printf("Set to %d", *data_entry);

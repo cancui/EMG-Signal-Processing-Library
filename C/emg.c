@@ -20,8 +20,8 @@ struct EMG_ {
 
 EMG *new_EMG(	uint16_t sample_frequency_, 
 				float range_, 
-				uint16_t min_EMG_frequency_, 
-				uint16_t max_EMG_frequency_, 
+				uint16_t min_EMG_frequency_, //Consider removing, or keeping it for future use
+				uint16_t max_EMG_frequency_, //Consider removing, or keeping it for future use
 				EMG_OPTIONS remove_low_frequency_, 
 				EMG_OPTIONS reference_available_) 
 {
