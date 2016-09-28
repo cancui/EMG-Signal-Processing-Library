@@ -5,8 +5,14 @@
 - Most of the algorithms implemented run in constant time with respect to sampling rate
 - Currently supports the following languages: C, Python
 
-![alt text](https://github.com/cancui/EMG-ECG-Signal-Processing-Library/blob/master/Sample%20Signals/EMG_raw_vs_filtered.jpg "Logo Title Text 1")
+![alt text](https://github.com/cancui/EMG-ECG-Signal-Processing-Library/blob/master/Sample%20Signals/EMG_raw_vs_filtered1.jpg "Logo Title Text 1")
 ##### A comparison of a raw EMG input signal vs. processed output signal (sample_frequency_ = 1000, range_ = 0.1, min_EMG_frequency_ = 25, max_EMG_frequency_ = 300, remove_low_frequency_ = HIGH_PASS_FILTER_ON, reference_available_ = REFERENCE_UNAVAILABLE)
+
+
+-------------------------------------------
+
+![alt text](https://github.com/cancui/EMG-ECG-Signal-Processing-Library/blob/master/Sample%20Signals/EMG_raw_vs_filtered2.jpg "Logo Title Text 1")
+##### Another comparison of a raw EMG input signal vs. processed output signal (sample_frequency_ = 1000, range_ = 0.1, min_EMG_frequency_ = 25, max_EMG_frequency_ = 300, remove_low_frequency_ = HIGH_PASS_FILTER_ON, reference_available_ = REFERENCE_UNAVAILABLE)
 
 -------------------------------------------
 
