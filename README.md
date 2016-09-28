@@ -1,4 +1,4 @@
-# EMG/ECG Signal Processing Library
+# EMG/ECG Signal Processing Library (graphed signals below!)
 
 - This is a specialized real-time signal processing library for EMG and ECG signals
 - This library provides the tools to extract muscle effort information from EMG signals and heart rate from ECG signals in real time
