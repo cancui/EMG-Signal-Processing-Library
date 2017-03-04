@@ -1,7 +1,7 @@
-# EMG/ECG Signal Processing Library (graphed signals below!)
+# EMG Signal Processing Library (graphed signals below!)
 
-- This is a specialized real-time signal processing library for EMG and ECG signals
-- This library provides the tools to extract muscle effort information from EMG signals and heart rate from ECG signals in real time
+- This is a specialized real-time signal processing library for EMG signals
+- This library provides the tools to extract muscle effort information from EMG signals in real time
 - Most of the algorithms implemented run in constant time with respect to sampling rate
 - Currently supports the following languages: C, Python
 
@@ -119,7 +119,7 @@ This is the same as filter_EMG, except a reference data point must also be speci
 -------------------------------------------
 
 
-### 3) ECG PROCESSING
+### 3) ECG PROCESSING (requires further development)
 - This library provides a tool to derive the BPM indicated by an ECG signal
 - The module uses the following steps to achieve this:
 	* Initialization:
