@@ -137,10 +137,10 @@ class EMGFilterEMA(EMGFilterBasicEMA):
     """
 
     def __init__(self, sample_frequency=200, range_=0.5, min_EMG_frequency=25, max_EMG_frequency=150,
-                 reference_available=False):
+                 reference_available_=False, exponential_factor=0.5):
         EMGFilterBasicEMA.__init__(self, sample_frequency=sample_frequency, range_=range_,
-                                   reference_available=reference_available)
-        self.reference_available = reference_available
+        reference_available=reference_available, exponential_factor_=exponential_factor))
+        self.reference_available = reference_available_
         self.PkPk = su.PeakToPeak(sample_frequency=sample_frequency, min_frequency=min_EMG_frequency,
                                   max_frequency=max_EMG_frequency)
 

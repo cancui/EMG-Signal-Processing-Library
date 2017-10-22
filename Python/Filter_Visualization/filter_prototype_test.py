@@ -19,16 +19,16 @@ inputReader = csv.reader(inputFile)
 
 # Set up the list of filters to test out
 filters = []
-filters.append(emg.EMGFilterBasicEMA(sample_frequency=1000, exponential_factor_=0.5))
-filters.append(emg.EMGFilterBasicEMA(sample_frequency=1000, exponential_factor_=0.75))
-filters.append(emg.EMGFilterBasicEMA(sample_frequency=1000, exponential_factor_=0.9))
-filters.append(emg.EMGFilterBasicEMA(sample_frequency=1000, exponential_factor_=0.925))
-filters.append(emg.EMGFilterBasicEMA(sample_frequency=1000, exponential_factor_=0.95))
-filters.append(emg.EMGFilterBasicEMA(sample_frequency=1000, exponential_factor_=0.975))
-filters.append(emg.EMGFilterBasicEMA(sample_frequency=1000, exponential_factor_=0.985))
-filters.append(emg.EMGFilterBasicEMA(sample_frequency=1000, exponential_factor_=0.99))
-filters.append(emg.EMGFilterBasicEMA(sample_frequency=1000, exponential_factor_=0.999))
-filters.append(emg.EMGFilterBasic(sample_frequency=1000))
+filters.append(emg.EMGFilterEMA(sample_frequency=1000, exponential_factor_=0.5))
+filters.append(emg.EMGFilterEMA(sample_frequency=1000, exponential_factor_=0.75))
+filters.append(emg.EMGFilterEMA(sample_frequency=1000, exponential_factor_=0.9))
+filters.append(emg.EMGFilterEMA(sample_frequency=1000, exponential_factor_=0.925))
+filters.append(emg.EMGFilterEMA(sample_frequency=1000, exponential_factor_=0.95))
+filters.append(emg.EMGFilterEMA(sample_frequency=1000, exponential_factor_=0.975))
+filters.append(emg.EMGFilterEMA(sample_frequency=1000, exponential_factor_=0.985))
+filters.append(emg.EMGFilterEMA(sample_frequency=1000, exponential_factor_=0.99))
+filters.append(emg.EMGFilterEMA(sample_frequency=1000, exponential_factor_=0.999))
+filters.append(emg.EMGFilter(sample_frequency=1000))
 
 filter_names = ["Unfiltered Data", "EMA 0.5", "EMA 0.75", "EMA 0.9", "EMA 0.925", "EMA 0.95", "EMA 0.975", "EMA 0.985",
                 "EMA 0.99", "EMA 0.999", "MA"]
@@ -85,6 +85,6 @@ axarr[num_plots-1].set_xlabel('Time (s)')
 fig.set_size_inches(80, num_plots*5)
 figure_path = os.path.abspath(os.path.join(basepath, '..', '..', 'Sample Signals', 'Plotted Filters',
                                            'Filter Comparison ' + str(datetime.datetime.now()) + '.png'))
-fig.savefig(figure_path, bbox_inches='tight', dpi=300)
+fig.savefig(figure_path, bbox_inches='tight', dpi=100)
 
 print("Plot is finished and saved")
